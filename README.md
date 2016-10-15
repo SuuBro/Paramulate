@@ -1,2 +1,2 @@
-# Comparams
+# Paramulate
 Component Parameterisation for C#

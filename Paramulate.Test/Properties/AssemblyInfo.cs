@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("Comparams.Test")]
+[assembly: AssemblyTitle("Paramulate.Test")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Comparams.Test")]
+[assembly: AssemblyProduct("Paramulate.Test")]
 [assembly: AssemblyCopyright("Copyright ©  116")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

@@ -73,6 +73,9 @@ namespace Paramulate.Test
 
         [Default(TestData.NullStr)]
         DateTime? DateTimeNull { get; }
+
+        [Default(TestData.NullStr)]
+        TimeSpan? TimeSpanNull { get; set; }
     }
 
     public interface ITestInvalidParameterObject
@@ -154,6 +157,8 @@ namespace Paramulate.Test
                     .SetName("DateTime");
                 yield return new TestCaseData(new NullableGetter<DateTime?>(r => r.DateTimeNull), null)
                     .SetName("DateTimeNull");
+                yield return new TestCaseData(new NullableGetter<TimeSpan?>(r => r.TimeSpanNull), null)
+                    .SetName("TimespanNull");
             }
         }
 

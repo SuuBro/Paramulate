@@ -20,6 +20,20 @@ namespace Paramulate.Serialisation
                 return null;
             }
 
+            if (targetType == typeof(TimeSpan))
+            {
+                try
+                {
+                    return TimeSpan.Parse(inValue);
+                }
+                catch (FormatException e)
+                {
+                    throw new InvalidProvidedValueException(
+                        $"Failed to convert value '{inValue}' for property '{targetName}' (type:{targetType})", e);
+                }
+
+            }
+
             if (targetType.IsGenericType && targetType.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
                 targetType = targetType.GenericTypeArguments[0];
@@ -46,8 +60,9 @@ namespace Paramulate.Serialisation
 
         private static bool RequiresQuoting(string inValue, Type targetType)
         {
-            return (targetType == typeof(string) || targetType == typeof(DateTime))
-                   && inValue.Length > 0 && inValue[0] != '\'';
+            return (inValue.Length > 0 && inValue[0] != '\'') &&
+                   (targetType == typeof(string)
+                 || targetType == typeof(DateTime));
         }
     }
 }

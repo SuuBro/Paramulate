@@ -4,6 +4,8 @@ namespace Paramulate.Test
 {
     internal class TestData
     {
+        public const string NullStr = "null";
+
         public const int Int = 23;
         public const string IntStr = "23";
 
@@ -34,6 +36,8 @@ namespace Paramulate.Test
         public static readonly DateTime Date = new DateTime(2016, 10, 16);
         public const string DateStr = "2016-10-16";
 
-        public const string NullStr = "null";
+        public static readonly TimeSpan TimeSpan = new TimeSpan(0, 9, 11, 12, 300);
+        public const string TimeSpanStr = "09:11:12.3";
+        public const string InvalidTimeSpanStr = "09::11";
     }
 }

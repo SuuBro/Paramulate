@@ -40,6 +40,9 @@ namespace Paramulate.Test
 
         [Default(TestData.DateStr)]
         DateTime Date { get; }
+
+        [Default(TestData.TimeSpanStr)]
+        TimeSpan TimeSpan { get; }
     }
 
     public interface ITestParameterObjectNullables
@@ -78,6 +81,12 @@ namespace Paramulate.Test
         int InvalidInt { get; }
     }
 
+    public interface ITestInvalidParameterObject2
+    {
+        [Default(TestData.InvalidTimeSpanStr)]
+        TimeSpan InvalidTimeSpan { get; }
+    }
+
     [TestFixture]
     public class TestDefaults
     {
@@ -110,6 +119,8 @@ namespace Paramulate.Test
                     .SetName("QuotedDateTime");
                 yield return new TestCaseData(new Getter<DateTime>(r => r.Date), TestData.Date)
                     .SetName("Date");
+                yield return new TestCaseData(new Getter<TimeSpan>(r => r.TimeSpan), TestData.TimeSpan)
+                    .SetName("TimeSpan");
             }
         }
 
@@ -157,7 +168,18 @@ namespace Paramulate.Test
         [Test]
         public void TestInvalidInt()
         {
-            Assert.That(Build<ITestInvalidParameterObject>, Throws.TypeOf<InvalidProvidedValueException>());
+            Assert.That(Build<ITestInvalidParameterObject>,
+                Throws.TypeOf<InvalidProvidedValueException>()
+                .With.Message.EqualTo("Failed to convert value '9223372036854775808' for " +
+                                      "property 'InvalidInt' (type:System.Int32)"));
+        }
+
+        [Test]
+        public void TestInvalidTimespan()
+        {
+            Assert.That(Build<ITestInvalidParameterObject2>, Throws.TypeOf<InvalidProvidedValueException>()
+                .With.Message.EqualTo("Failed to convert value '09::11' for " +
+                                      "property 'InvalidTimeSpan' (type:System.TimeSpan)"));
         }
 
         private static T Build<T>() where T : class

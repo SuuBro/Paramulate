@@ -33,5 +33,7 @@ namespace Paramulate.Test
 
         public static readonly DateTime Date = new DateTime(2016, 10, 16);
         public const string DateStr = "2016-10-16";
+
+        public const string NullStr = "null";
     }
 }

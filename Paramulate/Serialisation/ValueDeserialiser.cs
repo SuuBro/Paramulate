@@ -15,12 +15,23 @@ namespace Paramulate.Serialisation
     {
         public static object GetValue(string inValue, Type targetType, string targetName)
         {
+            if (inValue == "null")
+            {
+                return null;
+            }
+
+            if (targetType.IsGenericType && targetType.GetGenericTypeDefinition() == typeof(Nullable<>))
+            {
+                targetType = targetType.GenericTypeArguments[0];
+            }
+
             if (RequiresQuoting(inValue, targetType))
             {
                 inValue = string.Format("{0}{1}{0}", "'", inValue);
             }
 
             var deserialised = JsonConvert.DeserializeObject(inValue);
+
             try
             {
                 return Convert.ChangeType(deserialised, targetType);

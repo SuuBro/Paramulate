@@ -42,6 +42,36 @@ namespace Paramulate.Test
         DateTime Date { get; }
     }
 
+    public interface ITestParameterObjectNullables
+    {
+        [Default(TestData.IntStr)]
+        int? Int { get; }
+
+        [Default(TestData.NullStr)]
+        int? IntNull { get; }
+
+        [Default(TestData.NullStr)]
+        string StringNull { get; }
+
+        [Default(TestData.LongStr)]
+        long? Long { get; }
+
+        [Default(TestData.NullStr)]
+        long? LongNull { get; }
+
+        [Default(TestData.FloatStr)]
+        float? Float { get; }
+
+        [Default(TestData.NullStr)]
+        float? FloatNull { get; }
+
+        [Default(TestData.DateTimeStr)]
+        DateTime? DateTime { get; }
+
+        [Default(TestData.NullStr)]
+        DateTime? DateTimeNull { get; }
+    }
+
     public interface ITestInvalidParameterObject
     {
         [Default(TestData.InvalidIntStr)]
@@ -52,6 +82,7 @@ namespace Paramulate.Test
     public class TestDefaults
     {
         public delegate T Getter<out T>(ITestParameterObject fromObject);
+        public delegate T NullableGetter<out T>(ITestParameterObjectNullables fromObject);
 
         private static IEnumerable TestCases
         {
@@ -87,6 +118,39 @@ namespace Paramulate.Test
         public void TestPrimitives<T>(Getter<T> valueToCheck, T expected)
         {
             var result = Build<ITestParameterObject>();
+            Assert.That(valueToCheck(result), Is.EqualTo(expected));
+        }
+
+        private static IEnumerable NullableTestCases
+        {
+            get
+            {
+                yield return new TestCaseData(new NullableGetter<int?>(r => r.Int), TestData.Int)
+                    .SetName("Int");
+                yield return new TestCaseData(new NullableGetter<int?>(r => r.IntNull), null)
+                    .SetName("IntNull");
+                yield return new TestCaseData(new NullableGetter<string>(r => r.StringNull), null)
+                    .SetName("StringNull");
+                yield return new TestCaseData(new NullableGetter<long?>(r => r.Long), TestData.Long)
+                    .SetName("Long");
+                yield return new TestCaseData(new NullableGetter<long?>(r => r.LongNull), null)
+                    .SetName("LongNull");
+                yield return new TestCaseData(new NullableGetter<float?>(r => r.Float), TestData.Float)
+                    .SetName("Float");
+                yield return new TestCaseData(new NullableGetter<float?>(r => r.FloatNull), null)
+                    .SetName("FloatNull");
+                yield return new TestCaseData(new NullableGetter<DateTime?>(r => r.DateTime), TestData.DateTime)
+                    .SetName("DateTime");
+                yield return new TestCaseData(new NullableGetter<DateTime?>(r => r.DateTimeNull), null)
+                    .SetName("DateTimeNull");
+            }
+        }
+
+        [Test]
+        [TestCaseSource(nameof(NullableTestCases))]
+        public void TestNullables<T>(NullableGetter<T> valueToCheck, T expected)
+        {
+            var result = Build<ITestParameterObjectNullables>();
             Assert.That(valueToCheck(result), Is.EqualTo(expected));
         }
 

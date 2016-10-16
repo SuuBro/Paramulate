@@ -6,6 +6,7 @@ using Paramulate.Serialisation;
 
 namespace Paramulate.Test
 {
+    [Paramulate]
     public interface ITestParameterObject
     {
         [Default(TestData.IntStr)]
@@ -45,6 +46,7 @@ namespace Paramulate.Test
         TimeSpan TimeSpan { get; }
     }
 
+    [Paramulate]
     public interface ITestParameterObjectNullables
     {
         [Default(TestData.IntStr)]
@@ -78,12 +80,14 @@ namespace Paramulate.Test
         TimeSpan? TimeSpanNull { get; set; }
     }
 
+    [Paramulate]
     public interface ITestInvalidParameterObject
     {
         [Default(TestData.InvalidIntStr)]
         int InvalidInt { get; }
     }
 
+    [Paramulate]
     public interface ITestInvalidParameterObject2
     {
         [Default(TestData.InvalidTimeSpanStr)]
@@ -187,7 +191,7 @@ namespace Paramulate.Test
                                       "property 'InvalidTimeSpan' (type:System.TimeSpan)"));
         }
 
-        private static T Build<T>() where T : class
+        public static T Build<T>() where T : class
         {
             var builder = ParamsBuilder<T>.New();
             var result = builder.Build();

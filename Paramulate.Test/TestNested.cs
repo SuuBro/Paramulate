@@ -35,7 +35,7 @@ namespace Paramulate.Test
         [Test]
         public void TestOneLevelDeep()
         {
-            var result = Build<IParent>();
+            var result = TestUtils.Build<IParent>();
             Assert.That(result.TestParentValue, Is.EqualTo("TestParent"));
             Assert.That(result.Child.TestChildValue, Is.EqualTo("TestChild"));
         }
@@ -43,17 +43,10 @@ namespace Paramulate.Test
         [Test]
         public void TestTwoLevelsDeep()
         {
-            var result = Build<IGrandParent>();
+            var result = TestUtils.Build<IGrandParent>();
             Assert.That(result.TestGrandParentValue, Is.EqualTo("TestGrandParent"));
             Assert.That(result.Child.TestParentValue, Is.EqualTo("TestParent"));
             Assert.That(result.Child.Child.TestChildValue, Is.EqualTo("TestChild"));
-        }
-
-        public static T Build<T>() where T : class
-        {
-            var builder = ParamsBuilder<T>.New();
-            var result = builder.Build();
-            return result;
         }
     }
 }

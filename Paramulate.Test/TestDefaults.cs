@@ -2,6 +2,7 @@
 using System.Collections;
 using NUnit.Framework;
 using Paramulate.Attributes;
+using Paramulate.Exceptions;
 using Paramulate.Serialisation;
 
 namespace Paramulate.Test
@@ -44,6 +45,8 @@ namespace Paramulate.Test
 
         [Default(TestData.TimeSpanStr)]
         TimeSpan TimeSpan { get; }
+
+        string PropertyWithoutDefault { get; }
     }
 
     [Paramulate]
@@ -135,7 +138,7 @@ namespace Paramulate.Test
         [TestCaseSource(nameof(TestCases))]
         public void TestPrimitives<T>(Getter<T> valueToCheck, T expected)
         {
-            var result = Build<ITestParameterObject>();
+            var result = TestUtils.Build<ITestParameterObject>();
             Assert.That(valueToCheck(result), Is.EqualTo(expected));
         }
 
@@ -170,32 +173,25 @@ namespace Paramulate.Test
         [TestCaseSource(nameof(NullableTestCases))]
         public void TestNullables<T>(NullableGetter<T> valueToCheck, T expected)
         {
-            var result = Build<ITestParameterObjectNullables>();
+            var result = TestUtils.Build<ITestParameterObjectNullables>();
             Assert.That(valueToCheck(result), Is.EqualTo(expected));
         }
 
         [Test]
         public void TestInvalidInt()
         {
-            Assert.That(Build<ITestInvalidParameterObject>,
+            Assert.That(TestUtils.Build<ITestInvalidParameterObject>,
                 Throws.TypeOf<InvalidProvidedValueException>()
-                .With.Message.EqualTo("Failed to convert value '9223372036854775808' for " +
-                                      "property 'InvalidInt' (type:System.Int32)"));
+                .With.Message.EqualTo("Failed to convert value '9223372036854775808' for property 'InvalidInt'" +
+                                      " (type:System.Int32) when setting default value"));
         }
 
         [Test]
         public void TestInvalidTimespan()
         {
-            Assert.That(Build<ITestInvalidParameterObject2>, Throws.TypeOf<InvalidProvidedValueException>()
+            Assert.That(TestUtils.Build<ITestInvalidParameterObject2>, Throws.TypeOf<InvalidProvidedValueException>()
                 .With.Message.EqualTo("Failed to convert value '09::11' for " +
-                                      "property 'InvalidTimeSpan' (type:System.TimeSpan)"));
-        }
-
-        public static T Build<T>() where T : class
-        {
-            var builder = ParamsBuilder<T>.New();
-            var result = builder.Build();
-            return result;
+                                      "property 'InvalidTimeSpan' (type:System.TimeSpan) when setting default value"));
         }
     }
 }

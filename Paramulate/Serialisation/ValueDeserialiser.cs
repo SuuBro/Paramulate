@@ -1,19 +1,12 @@
 ﻿using System;
 using Newtonsoft.Json;
+using Paramulate.Exceptions;
 
 namespace Paramulate.Serialisation
 {
-    public class InvalidProvidedValueException : Exception
+    internal class ValueDeserialiser
     {
-        public InvalidProvidedValueException(string message, Exception inner)
-            : base(message, inner)
-        {
-        }
-    }
-
-    public class ValueDeserialiser
-    {
-        public static object GetValue(string inValue, Type targetType, string targetName)
+        public static object GetValue(string inValue, Type targetType, string targetName, string context)
         {
             if (inValue == "null")
             {
@@ -29,9 +22,9 @@ namespace Paramulate.Serialisation
                 catch (FormatException e)
                 {
                     throw new InvalidProvidedValueException(
-                        $"Failed to convert value '{inValue}' for property '{targetName}' (type:{targetType})", e);
+                        $"Failed to convert value '{inValue}' for property '{targetName}' (type:{targetType}) when" +
+                        $" {context}", e);
                 }
-
             }
 
             if (targetType.IsGenericType && targetType.GetGenericTypeDefinition() == typeof(Nullable<>))
@@ -41,10 +34,20 @@ namespace Paramulate.Serialisation
 
             if (RequiresQuoting(inValue, targetType))
             {
-                inValue = string.Format("{0}{1}{0}", "'", inValue);
+                inValue = $"\'{inValue}\'";
             }
 
-            var deserialised = JsonConvert.DeserializeObject(inValue);
+            object deserialised;
+            try
+            {
+                deserialised = JsonConvert.DeserializeObject(inValue);
+            }
+            catch (JsonReaderException e)
+            {
+                throw new InvalidProvidedValueException(
+                    $"Failed to deserialize value '{inValue}' for property '{targetName}' (type:{targetType})" +
+                    $" when {context}", e);
+            }
 
             try
             {
@@ -53,7 +56,8 @@ namespace Paramulate.Serialisation
             catch (InvalidCastException e)
             {
                 throw new InvalidProvidedValueException(
-                    $"Failed to convert value '{inValue}' for property '{targetName}' (type:{targetType})", e);
+                    $"Failed to convert value '{inValue}' for property '{targetName}' (type:{targetType})" +
+                    $" when {context}", e);
             }
 
         }

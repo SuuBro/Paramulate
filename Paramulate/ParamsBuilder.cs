@@ -13,11 +13,6 @@ namespace Paramulate
         T Build(string rootName);
     }
 
-    internal class Consts
-    {
-        internal const char PathSeperator = '.';
-    }
-
     public class ParamsBuilder<T> : IParamsBuilder<T> where T : class
     {
         internal ParamsBuilder()

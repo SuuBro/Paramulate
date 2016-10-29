@@ -51,6 +51,7 @@
     <Compile Include="Attributes\DefaultAttribute.cs" />
     <Compile Include="Attributes\OverrideAttribute.cs" />
     <Compile Include="Attributes\ParamulateAttribute.cs" />
+    <Compile Include="Consts.cs" />
     <Compile Include="Exceptions\InvalidPropertySpecifierException.cs" />
     <Compile Include="Exceptions\InvalidProvidedValueException.cs" />
     <Compile Include="Exceptions\ProgrammerErrorException.cs" />

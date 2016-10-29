@@ -3,7 +3,6 @@ using System.Collections;
 using NUnit.Framework;
 using Paramulate.Attributes;
 using Paramulate.Exceptions;
-using Paramulate.Serialisation;
 
 namespace Paramulate.Test
 {

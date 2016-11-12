@@ -4,6 +4,14 @@ using Paramulate.Exceptions;
 
 namespace Paramulate.Serialisation
 {
+    internal class ValueSerialser
+    {
+        public static string Serialize(object value)
+        {
+            return JsonConvert.SerializeObject(value, new JsonSerializerSettings {Formatting = Formatting.Indented});
+        }
+    }
+
     internal class ValueDeserialiser
     {
         public static object GetValue(string inValue, Type targetType, string targetName, string context)

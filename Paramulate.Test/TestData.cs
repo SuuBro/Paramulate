@@ -16,16 +16,16 @@ namespace Paramulate.Test
         public const string UnquotedStringWithQuote = "A : '[] \n �ATestString";
         public const string QuotedStringWithEscapedQuote = "'A : \\'[] \n �ATestString'";
 
-        public const long Long = Int64.MinValue;
+        public const long Long = long.MinValue;
         public const string LongStr = "-9223372036854775808";
 
         public const float Float = 0.000034443f;
         public const string FloatStr = "0.000034443";
 
-        public const float FloatNaN = Single.NaN;
+        public const float FloatNaN = float.NaN;
         public const string FloatNaNStr = "NaN";
 
-        public const float FloatNegInfinity = Single.NegativeInfinity;
+        public const float FloatNegInfinity = float.NegativeInfinity;
         public const string FloatNegInfinityStr = "-Infinity";
 
         public const double Double = 0.123456789012345;

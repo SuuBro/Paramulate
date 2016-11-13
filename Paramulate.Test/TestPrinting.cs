@@ -12,7 +12,7 @@ namespace Paramulate.Test
         int AnIntFromDefault { get; set; }
 
         [Default("Here Is A Value Mate")]
-        string AStringFromDefault { get; set; }
+        string AString { get; set; }
     }
 
     [Paramulate]
@@ -21,6 +21,7 @@ namespace Paramulate.Test
         [Default("120021")]
         int ParentLevelInt { get; set; }
 
+        [Override("AString", "I came from IPrintParent")]
         ISimple Child1 { get; set; }
 
         [Default("I'm on the parent")]
@@ -43,7 +44,7 @@ namespace Paramulate.Test
             Assert.That(testStream.ToString(), Is.EqualTo(
 @"RootName:
   AnIntFromDefault: 110011 (From Default)
-  AStringFromDefault: ""Here Is A Value Mate"" (From Default)
+  AString: ""Here Is A Value Mate"" (From Default)
 "
             ));
         }
@@ -63,7 +64,7 @@ namespace Paramulate.Test
   ParentLevelInt: 120021 (From Default)
   Child1:
     AnIntFromDefault: 110011 (From Default)
-    AStringFromDefault: ""Here Is A Value Mate"" (From Default)
+    AString: ""I came from IPrintParent"" (From Override in IPrintParent)
 
   ParentLevelString: ""I'm on the parent"" (From Default)
 "

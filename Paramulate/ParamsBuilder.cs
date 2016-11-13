@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing;
 using System.Dynamic;
 using System.IO;
 using ImpromptuInterface;
@@ -51,12 +52,32 @@ namespace Paramulate
             {
                 throw new ArgumentException("Are you sure you passed in a Paramulate object?");
             }
-            writer.WriteLine(obj[Consts.RootNameField]);
-            var propertyInfos = ReflectionUtils.GetProperties(typeof(T));
+            writer.WriteLine(obj[Consts.RootNameField]+":");
+            PrintParamsObject(1, writer, typeof(T), obj);
+        }
+
+        private static string Indent(int depth)
+        {
+            return new string(' ', depth * 2);
+        }
+
+        private static void PrintParamsObject(int depth, TextWriter writer, Type type, IDictionary<string, object> obj)
+        {
+            var propertyInfos = ReflectionUtils.GetProperties(type);
             foreach (var property in propertyInfos)
             {
-                writer.WriteLine($"  {property.Name}: {ValueSerialser.Serialize(obj[property.Name])}" +
-                                 $" (From {obj[property.Name+Consts.SourceMetadata]})");
+                if (ReflectionUtils.IsNestedParameterProperty(property))
+                {
+                    writer.WriteLine($"{Indent(depth)}{property.Name}:");
+                    PrintParamsObject(depth+1, writer, property.PropertyType,
+                                      obj[property.Name] as IDictionary<string, object>);
+                    writer.WriteLine();
+                    continue;
+                }
+
+                writer.WriteLine($"{Indent(depth)}{property.Name}:" +
+                                 $" {ValueSerialser.Serialize(obj[property.Name])}" +
+                                 $" (From {obj[property.Name + Consts.SourceMetadata]})");
             }
         }
 

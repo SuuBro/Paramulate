@@ -18,6 +18,12 @@ namespace Paramulate.Test
         [Default(TestData.QuotedString)]
         string QuotedString { get; }
 
+        [Default(TestData.UnquotedStringWithQuote)]
+        string UnquotedStringWithQuote { get; }
+
+        [Default(TestData.QuotedStringWithEscapedQuote)]
+        string QuotedStringWithEscapedQuote { get; }
+
         [Default(TestData.LongStr)]
         long Long { get; }
 
@@ -112,6 +118,12 @@ namespace Paramulate.Test
                     .SetName("UnquotedString");
                 yield return new TestCaseData(new Getter<string>(r => r.QuotedString), TestData.UnquotedString)
                     .SetName("QuotedString");
+                yield return new TestCaseData(new Getter<string>(r => r.UnquotedStringWithQuote),
+                                              TestData.UnquotedStringWithQuote)
+                    .SetName("UnquotedStringWithQuote");
+                yield return new TestCaseData(new Getter<string>(r => r.QuotedStringWithEscapedQuote),
+                                              TestData.UnquotedStringWithQuote)
+                    .SetName("QuotedStringWithEscapedQuote");
                 yield return new TestCaseData(new Getter<long>(r => r.Long), TestData.Long)
                     .SetName("Long");
                 yield return new TestCaseData(new Getter<float>(r => r.Float), TestData.Float)

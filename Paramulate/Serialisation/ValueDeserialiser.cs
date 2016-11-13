@@ -42,6 +42,7 @@ namespace Paramulate.Serialisation
 
             if (RequiresQuoting(inValue, targetType))
             {
+                inValue = inValue.Replace("'", "\\'");
                 inValue = $"\'{inValue}\'";
             }
 

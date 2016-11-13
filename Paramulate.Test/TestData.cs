@@ -13,6 +13,8 @@ namespace Paramulate.Test
 
         public const string UnquotedString = "A : [] \n �ATestString";
         public const string QuotedString = "'A : [] \n �ATestString'";
+        public const string UnquotedStringWithQuote = "A : '[] \n �ATestString";
+        public const string QuotedStringWithEscapedQuote = "'A : \\'[] \n �ATestString'";
 
         public const long Long = Int64.MinValue;
         public const string LongStr = "-9223372036854775808";

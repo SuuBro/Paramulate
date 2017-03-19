@@ -79,8 +79,8 @@ namespace Paramulate.Test
             Assert.That(TestUtils.Build<IInvalidOverrideParams>,
                 Throws.TypeOf<InvalidPropertySpecifierException>()
                       .With.Message.EqualTo("Could not find the property 'LevelDoesntExist' the type" +
-                                            " 'Paramulate.Test.ILevel3Params'. Please chack the specifier " +
-                                            "'Level2Params.Level3Params.LevelDoesntExist' on property 'Params'" +
+                                            " 'Paramulate.Test.ILevel3Params'. Please chack the specifier" +
+                                            " 'Level2Params.Level3Params.LevelDoesntExist' on property 'Params'" +
                                             " in the type 'Paramulate.Test.IInvalidOverrideParams'"));
         }
 

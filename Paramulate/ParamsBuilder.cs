@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing;
 using System.Dynamic;
 using System.IO;
 using ImpromptuInterface;
 using Paramulate.Attributes;
 using Paramulate.Reflection;
 using Paramulate.Serialisation;
+using Paramulate.ValueProviders;
 
 namespace Paramulate
 {
@@ -19,13 +19,16 @@ namespace Paramulate
 
     public class ParamsBuilder<T> : IParamsBuilder<T> where T : class
     {
-        internal ParamsBuilder()
+        private readonly IReadOnlyList<IValueProvider> _valueProviders;
+
+        internal ParamsBuilder(IReadOnlyList<IValueProvider> valueProviders)
         {
+            _valueProviders = valueProviders;
         }
 
-        public static IParamsBuilder<T> New()
+        public static IParamsBuilder<T> New(IReadOnlyList<IValueProvider> valueProviders=null)
         {
-            return new ParamsBuilder<T>();
+            return new ParamsBuilder<T>(valueProviders ?? new IValueProvider[0]);
         }
 
         public T Build(string rootName)
@@ -41,8 +44,44 @@ namespace Paramulate
             obj[Consts.RootNameField] = rootName;
 
             FillObjectDefaults(rootName, typeof(T), obj);
+            SetValuesFromProviders(rootName, typeof(T), obj);
 
             return obj.ActLike<T>();
+        }
+
+        private void SetValuesFromProviders(string path, Type type, IDictionary<string, object> obj)
+        {
+            var propertyInfos = ReflectionUtils.GetProperties(type);
+            foreach (var property in propertyInfos)
+            {
+                var propertyPath = path + "." + property.Name;
+
+                if (ReflectionUtils.IsNestedParameterProperty(property))
+                {
+                    SetValuesFromProviders(propertyPath, property.PropertyType,
+                                           obj[property.Name] as IDictionary<string, object>);
+                    continue;
+                }
+
+                Value? value = null;
+                foreach (var provider in _valueProviders)
+                {
+                    value = provider.GetValue(propertyPath);
+                    if (value != null)
+                    {
+                        break;
+                    }
+                }
+
+                if (value == null)
+                {
+                    continue;
+                }
+                
+                obj[property.Name] = ValueDeserialiser.GetValue(value.Value.ValueToSet, property.PropertyType,
+                    property.Name, "setting value from value provider");
+                obj[property.Name + Consts.SourceMetadata] = value.Value.SourceHint;
+            }
         }
 
         public void WriteParams(T builtParamsObject, TextWriter writer)

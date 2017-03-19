@@ -60,7 +60,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\ReflectionUtils.cs" />
     <Compile Include="Serialisation\ValueDeserialiser.cs" />
+    <Compile Include="ValueProviders\CommandLineValueProvider.cs" />
+    <Compile Include="ValueProviders\InitResult.cs" />
     <Compile Include="ValueProviders\IValueProvider.cs" />
+    <Compile Include="ValueProviders\KeyData.cs" />
+    <Compile Include="ValueProviders\Value.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

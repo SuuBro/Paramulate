@@ -17,13 +17,22 @@ namespace Paramulate
         void WriteParams(T builtParamsObject, TextWriter textWriter);
     }
 
-    public class ParamsBuilder<T> : IParamsBuilder<T> where T : class
+    public sealed class ParamsBuilder<T> : IParamsBuilder<T> where T : class
     {
         private readonly IReadOnlyList<IValueProvider> _valueProviders;
 
         internal ParamsBuilder(IReadOnlyList<IValueProvider> valueProviders)
         {
             _valueProviders = valueProviders;
+            foreach (var provider in _valueProviders)
+            {
+                provider.Init(GetKeys());
+            }
+        }
+
+        private static KeyData[] GetKeys()
+        {
+            throw new NotImplementedException();
         }
 
         public static IParamsBuilder<T> New(IReadOnlyList<IValueProvider> valueProviders=null)

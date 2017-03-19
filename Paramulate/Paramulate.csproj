@@ -54,7 +54,9 @@
     <Compile Include="Consts.cs" />
     <Compile Include="Exceptions\InvalidPropertySpecifierException.cs" />
     <Compile Include="Exceptions\InvalidProvidedValueException.cs" />
+    <Compile Include="Exceptions\ParamulateException.cs" />
     <Compile Include="Exceptions\ProgrammerErrorException.cs" />
+    <Compile Include="Exceptions\UnrecognisedValueKeyException.cs" />
     <Compile Include="OverrideDetails.cs" />
     <Compile Include="ParamsBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

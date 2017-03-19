@@ -2,7 +2,7 @@
 
 namespace Paramulate.Exceptions
 {
-    public class InvalidProvidedValueException : Exception
+    public sealed class InvalidProvidedValueException : ParamulateException
     {
         internal InvalidProvidedValueException(string message, Exception inner)
             : base(message, inner)

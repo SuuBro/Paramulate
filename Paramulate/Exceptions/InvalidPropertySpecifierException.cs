@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace Paramulate.Exceptions
 {
-    public class InvalidPropertySpecifierException : Exception
+    public sealed class InvalidPropertySpecifierException : ParamulateException
     {
         internal InvalidPropertySpecifierException(Type containingType, string propertyName, OverrideDetails details)
             :this(containingType, propertyName, details.Attribute.Path, details.Property, details.ContainingType)

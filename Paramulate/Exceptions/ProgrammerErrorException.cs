@@ -2,7 +2,7 @@
 
 namespace Paramulate.Exceptions
 {
-    public class ProgrammerErrorException : Exception
+    public sealed class ProgrammerErrorException : ParamulateException
     {
         internal ProgrammerErrorException(string reason)
             : base($"{reason} {Environment.NewLine}" +

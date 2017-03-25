@@ -10,7 +10,7 @@ namespace Paramulate.Test
         [Test]
         public void TestUnexpectedValueKeyPresent()
         {
-            var mock = new MockIValueProvider(new InitResult(new []
+            var mock = new MockIValueProvider(InitResult.UnrecognisedArgs(new []
             {
                 new Value("key2", "11", "Command Line"),
             }));

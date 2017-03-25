@@ -12,7 +12,7 @@ namespace Paramulate.Test
             var uut = new CommandLineValueProvider(new []{"--key1=Value1", "--key2=Value2"});
             var knownKeys = new[]
             {
-                new KeyData("Object.Nested.Key1", "key1", "k"),
+                new KeyData(typeof(string), "Object.Nested.Key1", "key1", "k"),
             };
             var result = uut.Init(knownKeys);
             Assert.That(result.UnrecognisedSourceValues, Is.EquivalentTo(new []

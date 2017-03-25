@@ -1,13 +1,18 @@
-﻿namespace Paramulate.ValueProviders
+﻿using System;
+
+namespace Paramulate.ValueProviders
 {
     public sealed class KeyData
     {
-        internal KeyData(string fullKey, string referenceKey, string shortReferenceKey)
+        internal KeyData(Type type, string fullKey, string referenceKey, string shortReferenceKey)
         {
+            Type = type;
             FullKey = fullKey;
             ReferenceKey = referenceKey;
             ShortReferenceKey = shortReferenceKey;
         }
+
+        public Type Type { get; }
 
         public string FullKey { get; }
 

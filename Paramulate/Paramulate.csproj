@@ -66,6 +66,7 @@
     <Compile Include="ValueProviders\InitResult.cs" />
     <Compile Include="ValueProviders\IValueProvider.cs" />
     <Compile Include="ValueProviders\KeyData.cs" />
+    <Compile Include="ValueProviders\MonoOptions\Options.cs" />
     <Compile Include="ValueProviders\Value.cs" />
   </ItemGroup>
   <ItemGroup>

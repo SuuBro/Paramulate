@@ -12,5 +12,12 @@
             ValueToSet = value;
             SourceHint = sourceHint;
         }
+
+        public override string ToString()
+        {
+            return $"{{ {nameof(Key)}: {Key}, " +
+                   $"{nameof(ValueToSet)}: {ValueToSet}, " +
+                   $"{nameof(SourceHint)}: {SourceHint} }}";
+        }
     }
 }

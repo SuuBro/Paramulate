@@ -9,7 +9,7 @@ namespace Paramulate.ValueProviders
     /// </summary>
     public sealed class InitResult
     {
-        public InitResult(IList<Value> unrecognisedSourceValues)
+        private InitResult(IList<Value> unrecognisedSourceValues)
         {
             UnrecognisedSourceValues = unrecognisedSourceValues;
         }
@@ -18,5 +18,15 @@ namespace Paramulate.ValueProviders
         /// The unrecognised source values
         /// </summary>
         public IList<Value> UnrecognisedSourceValues { get; }
+
+        public static InitResult Ok()
+        {
+            return new InitResult(new Value[0]);
+        }
+
+        public static InitResult UnrecognisedArgs(IList<Value> unrecognisedSourceValues)
+        {
+            return new InitResult(unrecognisedSourceValues);
+        }
     }
 }

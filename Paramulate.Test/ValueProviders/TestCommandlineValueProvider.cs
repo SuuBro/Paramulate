@@ -1,8 +1,19 @@
 ﻿using NUnit.Framework;
+using Paramulate.Attributes;
 using Paramulate.ValueProviders;
 
 namespace Paramulate.Test
 {
+    [Paramulate]
+    public interface IInterface
+    {
+        [CommandLine("shortName", "Set the TestInt property")]
+        int TestInt { get; }
+
+        [CommandLine("s", "shorterName", "Set the TestInt property")]
+        int TestIntShort { get; }
+    }
+
     [TestFixture]
     public class TestCommandlineValueProvider
     {
@@ -50,6 +61,31 @@ namespace Paramulate.Test
             var builder = new ParamsBuilder<ILevel3Params>("Root", new []{uut}, true);
             var result = builder.Build();
             Assert.That(result.Level3Int, Is.EqualTo(value));
+        }
+
+        [Test]
+        [TestCase("shortName")]
+        [TestCase("Root.TestInt")]
+        public void TestCommandLineCanUseReferenceKey(string key)
+        {
+            const int value = 2;
+            var uut = new CommandLineValueProvider(new []{$"--{key}={value}"});
+            var builder = new ParamsBuilder<IInterface>("Root", new []{uut}, true);
+            var result = builder.Build();
+            Assert.That(result.TestInt, Is.EqualTo(value));
+        }
+
+        [Test]
+        [TestCase("s")]
+        [TestCase("shorterName")]
+        [TestCase("Root.TestIntShort")]
+        public void TestCommandLineCanUseShortReferenceKey(string key)
+        {
+            const int value = 2;
+            var uut = new CommandLineValueProvider(new []{$"-{key}={value}"});
+            var builder = new ParamsBuilder<IInterface>("Root", new []{uut}, true);
+            var result = builder.Build();
+            Assert.That(result.TestIntShort, Is.EqualTo(value));
         }
     }
 }

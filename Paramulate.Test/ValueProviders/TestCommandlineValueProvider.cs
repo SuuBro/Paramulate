@@ -41,5 +41,15 @@ namespace Paramulate.Test
             var result = builder.Build();
             Assert.That(result.Level3, Is.EqualTo(value));
         }
+
+        [Test]
+        public void TestCommandLineTrumpsDefault()
+        {
+            const int value = 2;
+            var uut = new CommandLineValueProvider(new []{$"--Root.Level3Int={value}"});
+            var builder = new ParamsBuilder<ILevel3Params>("Root", new []{uut}, true);
+            var result = builder.Build();
+            Assert.That(result.Level3Int, Is.EqualTo(value));
+        }
     }
 }

@@ -30,7 +30,7 @@ namespace Paramulate.Test
     {
         string Level3 { get; }
 
-        [Default("0")]
+        [Default("1")]
         int Level3Int { get; }
     }
 

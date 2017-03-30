@@ -6,7 +6,7 @@ namespace Paramulate.ValueProviders
 {
     public sealed class CommandLineValueProvider : IValueProvider
     {
-        private static string Hint => "Command Line";
+        internal static string Hint => "Command Line";
 
         private readonly string[] _arguments;
 
@@ -51,7 +51,10 @@ namespace Paramulate.ValueProviders
 
         public Value? GetValue(string key)
         {
-            return new Value(key,_dictionary[key], Hint);
+            string value;
+            return _dictionary.TryGetValue(key, out value)
+                ? (Value?) new Value(key, value, Hint)
+                : null;
         }
     }
 }

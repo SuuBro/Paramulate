@@ -26,10 +26,10 @@ namespace Paramulate
 
         internal ParamsBuilder(string rootName, IReadOnlyList<IValueProvider> valueProviders, bool throwOnUnrecognisedParameters)
         {
-            if (_rootName.Contains(Consts.PathSeperator.ToString()))
+            if (rootName.Contains(Consts.PathSeperator.ToString()))
             {
                 throw new ArgumentException(
-                    $"RootName cannot contain a '{Consts.PathSeperator}' char, you supplied: {_rootName}");
+                    $"RootName cannot contain a '{Consts.PathSeperator}' char, you supplied: {rootName}");
             }
 
             _rootName = rootName;

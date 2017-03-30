@@ -31,6 +31,7 @@ namespace Paramulate.Attributes
             string referenceKey, string helpText)
             : this(shortReferenceKey, referenceKey, helpText)
         {
+            throw new NotImplementedException("Yet!");
             PathToDeeperKey = pathToDeeperKey;
         }
     }

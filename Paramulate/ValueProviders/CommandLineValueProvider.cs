@@ -7,7 +7,7 @@ namespace Paramulate.ValueProviders
 {
     public sealed class CommandLineValueProvider : IValueProvider
     {
-        private static string Hint => "CommandLine";
+        private static string Hint => "Command Line";
 
         private readonly string[] _arguments;
 
@@ -23,7 +23,7 @@ namespace Paramulate.ValueProviders
             var optionSet = MakeOptionSet(knownKeys);
             var unknownArgs = optionSet.Parse(_arguments);
             return unknownArgs.Any()
-                ? InitResult.UnrecognisedArgs(unknownArgs.Select(a => new Value(a, a, Hint)).ToList())
+                ? InitResult.UnrecognisedParams(unknownArgs.Select(a => new UnrecognisedParameter(a, Hint)).ToList())
                 : InitResult.Ok();
         }
 

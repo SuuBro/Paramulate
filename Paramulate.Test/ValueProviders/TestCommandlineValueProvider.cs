@@ -15,9 +15,9 @@ namespace Paramulate.Test
                 new KeyData(typeof(string), "Object.Nested.Key1", "key1", "k"),
             };
             var result = uut.Init(knownKeys);
-            Assert.That(result.UnrecognisedSourceValues, Is.EquivalentTo(new []
+            Assert.That(result.UnrecognisedParameters, Is.EquivalentTo(new []
             {
-                new Value("key2", "Value2", "Command Line"),
+                new UnrecognisedParameter("--key2=Value2", "Command Line"),
             }));
 
         }

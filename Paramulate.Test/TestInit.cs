@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 using Paramulate.Exceptions;
 using Paramulate.ValueProviders;
 
@@ -10,15 +11,20 @@ namespace Paramulate.Test
         [Test]
         public void TestUnexpectedValueKeyPresent()
         {
-            var mock = new MockIValueProvider(InitResult.UnrecognisedArgs(new []
+            var mock = new MockIValueProvider(InitResult.UnrecognisedParams(new []
             {
-                new Value("key2", "11", "Command Line"),
+                new UnrecognisedParameter("key2=11", "Command Line"),
+                new UnrecognisedParameter("key3", "Command Line"),
+                new UnrecognisedParameter("13", "Command Line"),
             }));
             Assert.That(() => new ParamsBuilder<ITestParameterObject>(new []{mock}),
                 Throws.InstanceOf<UnrecognisedValueKeyException>()
-                .With.Message.Contains("Value was provided for key 'key2' which is not a valid key for " +
+                .With.Message.Contains("Unrecognised arguments were provided which can not be set on " +
                                        "the Paramulate tree with root type ITestParameterObject. "+
-                                       "Unrecognised Key 'key2' had value '11' from 'Command Line'. "));
+                                       $"Unrecognised arguments:{Environment.NewLine}" +
+                                       $"  '--key2=11' from Command Line{Environment.NewLine}" +
+                                       $"  '--key3' from 'Command Line'{Environment.NewLine}" +
+                                       $"  '13' from 'Command Line'"));
 
         }
     }

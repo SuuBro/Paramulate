@@ -13,18 +13,18 @@ namespace Paramulate.Test
         {
             var mock = new MockIValueProvider(InitResult.UnrecognisedParams(new []
             {
-                new UnrecognisedParameter("key2=11", "Command Line"),
-                new UnrecognisedParameter("key3", "Command Line"),
+                new UnrecognisedParameter("--key2=11", "Command Line"),
+                new UnrecognisedParameter("--key3", "Command Line"),
                 new UnrecognisedParameter("13", "Command Line"),
             }));
-            Assert.That(() => new ParamsBuilder<ITestParameterObject>(new []{mock}),
-                Throws.InstanceOf<UnrecognisedValueKeyException>()
+            Assert.That(() => new ParamsBuilder<ITestParameterObject>("", new []{mock}, true),
+                Throws.InstanceOf<UnrecognisedParameterException>()
                 .With.Message.Contains("Unrecognised arguments were provided which can not be set on " +
                                        "the Paramulate tree with root type ITestParameterObject. "+
                                        $"Unrecognised arguments:{Environment.NewLine}" +
                                        $"  '--key2=11' from Command Line{Environment.NewLine}" +
-                                       $"  '--key3' from 'Command Line'{Environment.NewLine}" +
-                                       $"  '13' from 'Command Line'"));
+                                       $"  '--key3' from Command Line{Environment.NewLine}" +
+                                       $"  '13' from Command Line"));
 
         }
     }
@@ -45,7 +45,7 @@ namespace Paramulate.Test
 
         public Value? GetValue(string key)
         {
-            throw new System.NotImplementedException();
+            throw new NotSupportedException();
         }
     }
 }

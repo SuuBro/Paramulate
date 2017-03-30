@@ -34,8 +34,8 @@ namespace Paramulate.Test
         [Test]
         public void TestPrintingSimple()
         {
-            var builder = ParamsBuilder<ISimple>.New();
-            var testObject = builder.Build("RootName");
+            var builder = ParamsBuilder<ISimple>.New("RootName");
+            var testObject = builder.Build();
             var testStream = new TextMessageWriter();
             builder.WriteParams(testObject, testStream);
 
@@ -52,8 +52,8 @@ namespace Paramulate.Test
         [Test]
         public void TestPrintingNested()
         {
-            var builder = ParamsBuilder<IPrintParent>.New();
-            var testObject = builder.Build("PrintParent");
+            var builder = ParamsBuilder<IPrintParent>.New("PrintParent");
+            var testObject = builder.Build();
             var testStream = new TextMessageWriter();
             builder.WriteParams(testObject, testStream);
 

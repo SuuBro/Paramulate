@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
+using System.Linq;
 using ImpromptuInterface;
 using Paramulate.Attributes;
+using Paramulate.Exceptions;
 using Paramulate.Reflection;
 using Paramulate.Serialisation;
 using Paramulate.ValueProviders;
@@ -12,48 +14,80 @@ namespace Paramulate
 {
     public interface IParamsBuilder<T> where T : class
     {
-        T Build(string rootName);
+        T Build();
 
         void WriteParams(T builtParamsObject, TextWriter textWriter);
     }
 
     public sealed class ParamsBuilder<T> : IParamsBuilder<T> where T : class
     {
+        private readonly string _rootName;
         private readonly IReadOnlyList<IValueProvider> _valueProviders;
 
-        internal ParamsBuilder(IReadOnlyList<IValueProvider> valueProviders)
+        internal ParamsBuilder(string rootName, IReadOnlyList<IValueProvider> valueProviders, bool throwOnUnrecognisedParameters)
         {
+            _rootName = rootName;
             _valueProviders = valueProviders;
-            foreach (var provider in _valueProviders)
+            var initResults = _valueProviders.Select(provider => provider.Init(GetKeys(rootName, typeof(T))));
+            CheckForUnrecognisedParameters(throwOnUnrecognisedParameters, initResults);
+        }
+
+        private static void CheckForUnrecognisedParameters(bool throwOnUnrecognisedArgs, IEnumerable<InitResult> initResults)
+        {
+            if (!throwOnUnrecognisedArgs)
             {
-                provider.Init(GetKeys());
+                return;
+            }
+            var unrecognisedParameters = initResults.SelectMany(result => result.UnrecognisedParameters).ToArray();
+            if (unrecognisedParameters.Any())
+            {
+                throw new UnrecognisedParameterException(
+                    "Unrecognised arguments were provided which can not be set on " +
+                    "the Paramulate tree with root type ITestParameterObject. " +
+                    $"Unrecognised arguments:{Environment.NewLine}" +
+                    string.Join(Environment.NewLine,
+                        unrecognisedParameters.Select(up => $"  '{up.Parameter}' from {up.SourceHint}")));
             }
         }
 
-        private static KeyData[] GetKeys()
+        private static KeyData[] GetKeys(string path, Type type)
         {
-            throw new NotImplementedException();
+            var result = new List<KeyData>();
+            var propertyInfos = ReflectionUtils.GetProperties(type);
+            foreach (var property in propertyInfos)
+            {
+                var propertyPath = path + "." + property.Name;
+                if (ReflectionUtils.IsNestedParameterProperty(property))
+                {
+                    result.AddRange(GetKeys(propertyPath, property.PropertyType));
+                }
+                else
+                {
+                    result.Add(new KeyData(property.PropertyType, propertyPath, null, null));
+                }
+            }
+            return result.ToArray();
         }
 
-        public static IParamsBuilder<T> New(IReadOnlyList<IValueProvider> valueProviders=null)
+        public static IParamsBuilder<T> New(string root, IReadOnlyList<IValueProvider> valueProviders=null)
         {
-            return new ParamsBuilder<T>(valueProviders ?? new IValueProvider[0]);
+            return new ParamsBuilder<T>(root, valueProviders ?? new IValueProvider[0], true);
         }
 
-        public T Build(string rootName)
+        public T Build()
         {
-            if (rootName.Contains(Consts.PathSeperator.ToString()))
+            if (_rootName.Contains(Consts.PathSeperator.ToString()))
             {
                 throw new ArgumentException(
-                    $"RootName cannot contain a '{Consts.PathSeperator}' char, you supplied: {rootName}");
+                    $"RootName cannot contain a '{Consts.PathSeperator}' char, you supplied: {_rootName}");
             }
 
             var obj = new ExpandoObject() as IDictionary<string, object>;
 
-            obj[Consts.RootNameField] = rootName;
+            obj[Consts.RootNameField] = _rootName;
 
-            FillObjectDefaults(rootName, typeof(T), obj);
-            SetValuesFromProviders(rootName, typeof(T), obj);
+            FillObjectDefaults(_rootName, typeof(T), obj);
+            SetValuesFromProviders(_rootName, typeof(T), obj);
 
             return obj.ActLike<T>();
         }

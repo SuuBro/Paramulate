@@ -34,7 +34,7 @@ namespace Paramulate
 
             _rootName = rootName;
             _valueProviders = valueProviders;
-            var initResults = _valueProviders.Select(provider => provider.Init(GetKeys(rootName, typeof(T))));
+            var initResults = _valueProviders.Select(provider => provider.Init(GetKeys(rootName, typeof(T), 0)));
             CheckForUnrecognisedParameters(throwOnUnrecognisedParameters, initResults);
         }
 
@@ -56,7 +56,7 @@ namespace Paramulate
             }
         }
 
-        private static KeyData[] GetKeys(string path, Type type)
+        private static KeyData[] GetKeys(string path, Type type, int depth)
         {
             var result = new List<KeyData>();
             var propertyInfos = ReflectionUtils.GetProperties(type);
@@ -65,11 +65,20 @@ namespace Paramulate
                 var propertyPath = path + "." + property.Name;
                 if (ReflectionUtils.IsNestedParameterProperty(property))
                 {
-                    result.AddRange(GetKeys(propertyPath, property.PropertyType));
+                    result.AddRange(GetKeys(propertyPath, property.PropertyType, depth+1));
                 }
                 else
                 {
-                    result.Add(new KeyData(property.PropertyType, propertyPath, null, null));
+                    string referenceKey=null, shortReferenceKey = null;
+                    if (depth == 0)
+                    {
+                        var commandLineAttr = ReflectionUtils.GetAttributes<CommandLineAttribute>(property)
+                            .SingleOrDefault(attr => attr.PathToDeeperKey == null);
+                        referenceKey = commandLineAttr?.ReferenceKey;
+                        shortReferenceKey = commandLineAttr?.ShortReferenceKey;
+                    }
+
+                    result.Add(new KeyData(property.PropertyType, propertyPath, referenceKey, shortReferenceKey));
                 }
             }
             return result.ToArray();

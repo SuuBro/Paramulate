@@ -26,6 +26,12 @@ namespace Paramulate
 
         internal ParamsBuilder(string rootName, IReadOnlyList<IValueProvider> valueProviders, bool throwOnUnrecognisedParameters)
         {
+            if (_rootName.Contains(Consts.PathSeperator.ToString()))
+            {
+                throw new ArgumentException(
+                    $"RootName cannot contain a '{Consts.PathSeperator}' char, you supplied: {_rootName}");
+            }
+
             _rootName = rootName;
             _valueProviders = valueProviders;
             var initResults = _valueProviders.Select(provider => provider.Init(GetKeys(rootName, typeof(T))));
@@ -76,12 +82,6 @@ namespace Paramulate
 
         public T Build()
         {
-            if (_rootName.Contains(Consts.PathSeperator.ToString()))
-            {
-                throw new ArgumentException(
-                    $"RootName cannot contain a '{Consts.PathSeperator}' char, you supplied: {_rootName}");
-            }
-
             var obj = new ExpandoObject() as IDictionary<string, object>;
 
             obj[Consts.RootNameField] = _rootName;

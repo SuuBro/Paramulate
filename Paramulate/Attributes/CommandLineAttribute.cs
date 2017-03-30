@@ -3,7 +3,7 @@
 namespace Paramulate.Attributes
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
-    public class CommandLineAttribute
+    public class CommandLineAttribute : Attribute
     {
         public string PathToDeeperKey { get; }
         public string ShortReferenceKey { get; }

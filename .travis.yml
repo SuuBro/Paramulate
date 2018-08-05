@@ -1,8 +1,10 @@
 language: csharp
-solution: Paramulate.sln
+mono: none
+dotnet: 2.0.0
+
 install:
-  - nuget restore Paramulate.sln
-  - sudo apt-get install nunit-console
+- dotnet restore
+
 script:
-  - xbuild /p:Configuration=Release Paramulate.sln
-  - nunit-console ./Paramulate.Test/bin/Release/Paramulate.Test.dll
+ - dotnet build
+ - dotnet test Paramulate.Test/Paramulate.Tests.csproj

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using NUnit.Framework;
 using Paramulate.Attributes;
 using Paramulate.Exceptions;
@@ -105,87 +104,179 @@ namespace Paramulate.Test
     [TestFixture]
     public class TestDefaults
     {
-        public delegate T Getter<out T>(ITestParameterObject fromObject);
-        public delegate T NullableGetter<out T>(ITestParameterObjectNullables fromObject);
-
-        private static IEnumerable TestCases
+        [Test]
+        public void TestInt()
         {
-            get
-            {
-                yield return new TestCaseData(new Getter<int>(r => r.Int), TestData.Int)
-                    .SetName("Int");
-                yield return new TestCaseData(new Getter<string>(r => r.UnquotedString), TestData.UnquotedString)
-                    .SetName("UnquotedString");
-                yield return new TestCaseData(new Getter<string>(r => r.QuotedString), TestData.UnquotedString)
-                    .SetName("QuotedString");
-                yield return new TestCaseData(new Getter<string>(r => r.UnquotedStringWithQuote),
-                                              TestData.UnquotedStringWithQuote)
-                    .SetName("UnquotedStringWithQuote");
-                yield return new TestCaseData(new Getter<string>(r => r.QuotedStringWithEscapedQuote),
-                                              TestData.UnquotedStringWithQuote)
-                    .SetName("QuotedStringWithEscapedQuote");
-                yield return new TestCaseData(new Getter<long>(r => r.Long), TestData.Long)
-                    .SetName("Long");
-                yield return new TestCaseData(new Getter<float>(r => r.Float), TestData.Float)
-                    .SetName("Float");
-                yield return new TestCaseData(new Getter<float>(r => r.FloatNaN), TestData.FloatNaN)
-                    .SetName("FloatNaN");
-                yield return new TestCaseData(new Getter<float>(r => r.FloatNegInfinity), TestData.FloatNegInfinity)
-                    .SetName("FloatNegInfinity");
-                yield return new TestCaseData(new Getter<double>(r => r.Double), TestData.Double)
-                    .SetName("Double");
-                yield return new TestCaseData(new Getter<DateTime>(r => r.DateTime), TestData.DateTime)
-                    .SetName("DateTime");
-                yield return new TestCaseData(new Getter<DateTime>(r => r.QuotedDateTime), TestData.DateTime)
-                    .SetName("QuotedDateTime");
-                yield return new TestCaseData(new Getter<DateTime>(r => r.Date), TestData.Date)
-                    .SetName("Date");
-                yield return new TestCaseData(new Getter<TimeSpan>(r => r.TimeSpan), TestData.TimeSpan)
-                    .SetName("TimeSpan");
-            }
+            Assert.That(TestUtils.Build<ITestParameterObject>().Int,
+                Is.EqualTo(TestData.Int));
+        }
+        
+        [Test]
+        public void TestUnquotedString()
+        {
+            Assert.That(TestUtils.Build<ITestParameterObject>().UnquotedString,
+                Is.EqualTo(TestData.UnquotedString));
+        }
+        
+        [Test]
+        public void TestQuotedString()
+        {
+            Assert.That(TestUtils.Build<ITestParameterObject>().QuotedString,
+                Is.EqualTo(TestData.UnquotedString));
+        }
+        
+        [Test]
+        public void TestUnquotedStringWithQuote()
+        {
+            Assert.That(TestUtils.Build<ITestParameterObject>().UnquotedStringWithQuote,
+                Is.EqualTo(TestData.UnquotedStringWithQuote));
+        }
+        
+        [Test]
+        public void QuotedStringWithEscapedQuote()
+        {
+            Assert.That(TestUtils.Build<ITestParameterObject>().QuotedStringWithEscapedQuote,
+                Is.EqualTo(TestData.UnquotedStringWithQuote));
+        }
+        
+        [Test]
+        public void TestLong()
+        {
+            Assert.That(TestUtils.Build<ITestParameterObject>().Long,
+                Is.EqualTo(TestData.Long));
+        }
+        
+        [Test]
+        public void TestFloat()
+        {
+            Assert.That(TestUtils.Build<ITestParameterObject>().Float,
+                Is.EqualTo(TestData.Float));
+        }
+        
+        [Test]
+        public void TestFloatNaN()
+        {
+            Assert.That(TestUtils.Build<ITestParameterObject>().FloatNaN,
+                Is.EqualTo(TestData.FloatNaN));
+        }
+        
+        [Test]
+        public void TestFloatNegInfinity()
+        {
+            Assert.That(TestUtils.Build<ITestParameterObject>().FloatNegInfinity,
+                Is.EqualTo(TestData.FloatNegInfinity));
+        }
+        
+        [Test]
+        public void TestDouble()
+        {
+            Assert.That(TestUtils.Build<ITestParameterObject>().Double,
+                Is.EqualTo(TestData.Double));
+        }
+        
+        [Test]
+        public void TestDateTime()
+        {
+            Assert.That(TestUtils.Build<ITestParameterObject>().DateTime,
+                Is.EqualTo(TestData.DateTime));
+        }
+        
+        [Test]
+        public void TestQuotedDateTime()
+        {
+            Assert.That(TestUtils.Build<ITestParameterObject>().QuotedDateTime,
+                Is.EqualTo(TestData.DateTime));
+        }
+        
+        [Test]
+        public void TestDate()
+        {
+            Assert.That(TestUtils.Build<ITestParameterObject>().Date,
+                Is.EqualTo(TestData.Date));
+        }
+        
+        [Test]
+        public void TestTimeSpan()
+        {
+            Assert.That(TestUtils.Build<ITestParameterObject>().TimeSpan,
+                Is.EqualTo(TestData.TimeSpan));
+        }
+        
+        [Test]
+        public void TestPropertyWithoutDefault()
+        {
+            Assert.That(TestUtils.Build<ITestParameterObject>().PropertyWithoutDefault,
+                Is.EqualTo(null));
+        }
+        
+        [Test]
+        public void TestNullableInt()
+        {
+            Assert.That(TestUtils.Build<ITestParameterObjectNullables>().Int,
+                Is.EqualTo(TestData.Int));
+        }
+        
+        [Test]
+        public void TestNullableIntNull()
+        {
+            Assert.That(TestUtils.Build<ITestParameterObjectNullables>().IntNull,
+                Is.EqualTo(null));
+        }
+        
+        [Test]
+        public void TestNullableStringNull()
+        {
+            Assert.That(TestUtils.Build<ITestParameterObjectNullables>().StringNull,
+                Is.EqualTo(null));
         }
 
         [Test]
-        [TestCaseSource(nameof(TestCases))]
-        public void TestPrimitives<T>(Getter<T> valueToCheck, T expected)
+        public void TestNullableLong()
         {
-            var result = TestUtils.Build<ITestParameterObject>();
-            Assert.That(valueToCheck(result), Is.EqualTo(expected));
+            Assert.That(TestUtils.Build<ITestParameterObjectNullables>().Long,
+                Is.EqualTo(TestData.Long));
         }
-
-        private static IEnumerable NullableTestCases
-        {
-            get
-            {
-                yield return new TestCaseData(new NullableGetter<int?>(r => r.Int), TestData.Int)
-                    .SetName("Int");
-                yield return new TestCaseData(new NullableGetter<int?>(r => r.IntNull), null)
-                    .SetName("IntNull");
-                yield return new TestCaseData(new NullableGetter<string>(r => r.StringNull), null)
-                    .SetName("StringNull");
-                yield return new TestCaseData(new NullableGetter<long?>(r => r.Long), TestData.Long)
-                    .SetName("Long");
-                yield return new TestCaseData(new NullableGetter<long?>(r => r.LongNull), null)
-                    .SetName("LongNull");
-                yield return new TestCaseData(new NullableGetter<float?>(r => r.Float), TestData.Float)
-                    .SetName("Float");
-                yield return new TestCaseData(new NullableGetter<float?>(r => r.FloatNull), null)
-                    .SetName("FloatNull");
-                yield return new TestCaseData(new NullableGetter<DateTime?>(r => r.DateTime), TestData.DateTime)
-                    .SetName("DateTime");
-                yield return new TestCaseData(new NullableGetter<DateTime?>(r => r.DateTimeNull), null)
-                    .SetName("DateTimeNull");
-                yield return new TestCaseData(new NullableGetter<TimeSpan?>(r => r.TimeSpanNull), null)
-                    .SetName("TimespanNull");
-            }
-        }
-
+        
         [Test]
-        [TestCaseSource(nameof(NullableTestCases))]
-        public void TestNullables<T>(NullableGetter<T> valueToCheck, T expected)
+        public void TestNullableLongNull()
         {
-            var result = TestUtils.Build<ITestParameterObjectNullables>();
-            Assert.That(valueToCheck(result), Is.EqualTo(expected));
+            Assert.That(TestUtils.Build<ITestParameterObjectNullables>().LongNull,
+                Is.EqualTo(null));
+        }
+        
+        [Test]
+        public void TestNullableFloat()
+        {
+            Assert.That(TestUtils.Build<ITestParameterObjectNullables>().Float,
+                Is.EqualTo(TestData.Float));
+        }
+        
+        [Test]
+        public void TestNullableFloatNull()
+        {
+            Assert.That(TestUtils.Build<ITestParameterObjectNullables>().FloatNull,
+                Is.EqualTo(null));
+        }
+        
+        [Test]
+        public void TestNullableDateTime()
+        {
+            Assert.That(TestUtils.Build<ITestParameterObjectNullables>().DateTime,
+                Is.EqualTo(TestData.DateTime));
+        }
+        
+        [Test]
+        public void TestNullableDateTimeNull()
+        {
+            Assert.That(TestUtils.Build<ITestParameterObjectNullables>().DateTimeNull,
+                Is.EqualTo(null));
+        }
+        
+        [Test]
+        public void TestNullableTimeSpanNull()
+        {
+            Assert.That(TestUtils.Build<ITestParameterObjectNullables>().TimeSpanNull,
+                Is.EqualTo(null));
         }
 
         [Test]

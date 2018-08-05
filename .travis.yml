@@ -1,2 +1,8 @@
 language: csharp
 solution: Paramulate.sln
+install:
+  - nuget restore Paramulate.sln
+  - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
+script:
+  - xbuild /p:Configuration=Release Paramulate.sln
+  - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./Paramulate.Test/bin/Release/Paramulate.Test.dll

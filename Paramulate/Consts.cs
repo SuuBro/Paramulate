@@ -1,4 +1,8 @@
-﻿namespace Paramulate
+﻿using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("Paramulate.Test")]
+
+namespace Paramulate
 {
     internal class Consts
     {

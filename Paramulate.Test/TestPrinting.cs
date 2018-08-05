@@ -1,5 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 using Paramulate.Attributes;
 
 namespace Paramulate.Test

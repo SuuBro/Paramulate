@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using ImpromptuInterface;
 using Paramulate.Attributes;
 using Paramulate.Exceptions;
@@ -58,30 +59,53 @@ namespace Paramulate
 
         private static KeyData[] GetKeys(string path, Type type, int depth)
         {
-            var result = new List<KeyData>();
+            var result = new Dictionary<string,KeyData>();
             var propertyInfos = ReflectionUtils.GetProperties(type);
             foreach (var property in propertyInfos)
             {
                 var propertyPath = path + "." + property.Name;
                 if (ReflectionUtils.IsNestedParameterProperty(property))
                 {
-                    result.AddRange(GetKeys(propertyPath, property.PropertyType, depth+1));
+                    foreach (var key in GetKeys(propertyPath, property.PropertyType, depth + 1))
+                    {
+                        result.Add(key.FullKey, key);
+                    }
                 }
                 else
                 {
-                    string referenceKey=null, shortReferenceKey = null;
-                    if (depth == 0)
+                    result.Add(propertyPath, new KeyData(property.PropertyType, propertyPath));
+                }
+                if (depth != 0)
+                {
+                    continue;
+                }
+                foreach (var attr in ReflectionUtils.GetAttributes<CommandLineAttribute>(property))
+                {
+                    KeyData key;
+                    var absPath = path + "." + property.Name + "." + attr.PathToDeeperKey; 
+                    if (attr.PathToDeeperKey == null)
                     {
-                        var commandLineAttr = ReflectionUtils.GetAttributes<CommandLineAttribute>(property)
-                            .SingleOrDefault(attr => attr.PathToDeeperKey == null);
-                        referenceKey = commandLineAttr?.ReferenceKey;
-                        shortReferenceKey = commandLineAttr?.ShortReferenceKey;
+                        result[propertyPath] = result[propertyPath].WithCommandLine(
+                            attr.ReferenceKey, attr.ShortReferenceKey);
                     }
-
-                    result.Add(new KeyData(property.PropertyType, propertyPath, referenceKey, shortReferenceKey));
+                    else if (!result.TryGetValue(absPath, out key))
+                    {
+                        throw new InvalidPropertySpecifierException(type, property.Name, attr.PathToDeeperKey,
+                            property, type);
+                    }
+                    else
+                    {
+                        result[absPath] =
+                            key.WithCommandLine(attr.ReferenceKey, attr.ShortReferenceKey);
+                    }
                 }
             }
-            return result.ToArray();
+            return result.Values.ToArray();
+        }
+
+        private static KeyData AddCommandLineKeys(KeyData keyData, CommandLineAttribute attr)
+        {
+            return keyData.WithCommandLine(attr?.ReferenceKey, attr?.ShortReferenceKey);
         }
 
         public static IParamsBuilder<T> New(string root, IReadOnlyList<IValueProvider> valueProviders=null)

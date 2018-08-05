@@ -1,23 +1,45 @@
 ﻿using System;
+using System.Linq;
 
 namespace Paramulate.ValueProviders
 {
-    public sealed class KeyData
+    public struct CommandLineKeys
     {
-        internal KeyData(Type type, string fullKey, string referenceKey, string shortReferenceKey)
+        public CommandLineKeys(string referenceKey, string shortReferenceKey)
+        {
+            ReferenceKey = referenceKey;
+            ShortReferenceKey = shortReferenceKey;
+        }
+
+        public string ReferenceKey { get; }
+
+        public string ShortReferenceKey { get; }
+    }
+    
+    public struct KeyData
+    {
+        internal KeyData(Type type, string fullKey, params CommandLineKeys[] commandLineKeys)
         {
             Type = type;
             FullKey = fullKey;
-            ReferenceKey = referenceKey;
-            ShortReferenceKey = shortReferenceKey;
+            CommandLineKeys = commandLineKeys;
         }
 
         public Type Type { get; }
 
         public string FullKey { get; }
 
-        public string ReferenceKey { get; }
+        public CommandLineKeys[] CommandLineKeys { get; }
 
-        public string ShortReferenceKey { get; }
+        internal KeyData WithCommandLine(string refKey, string shortRefKey)
+        {
+            return new KeyData(
+                Type, 
+                FullKey, 
+                CommandLineKeys
+                    .Concat(new []{new CommandLineKeys(refKey, shortRefKey)})
+                    .ToArray()
+            );
+        }
     }
 }

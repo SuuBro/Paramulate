@@ -12,6 +12,15 @@ namespace Paramulate.Test
 
         [CommandLine("s", "shorterName", "Set the TestInt property")]
         int TestIntShort { get; }
+        
+        [CommandLine("TestString", "ds", "deepString", "Set the OneLevel.TestString porperty")]
+        IDeeper OneLevel { get; }
+    }
+
+    [Paramulate]
+    public interface IDeeper
+    {
+        string TestString { get; }
     }
 
     [TestFixture]
@@ -23,7 +32,7 @@ namespace Paramulate.Test
             var uut = new CommandLineValueProvider(new []{"--key1=Value1", "--key2=Value2"});
             var knownKeys = new[]
             {
-                new KeyData(typeof(string), "Object.Nested.Key1", "key1", "k"),
+                new KeyData(typeof(string), "Object.Nested.Key1", new CommandLineKeys("key1", "k"))
             };
             var result = uut.Init(knownKeys);
             Assert.That(result.UnrecognisedParameters, Is.EquivalentTo(new []
@@ -38,7 +47,7 @@ namespace Paramulate.Test
             const string key = "Root.Level3";
             const string value = "Value1";
             var uut = new CommandLineValueProvider(new []{$"--{key}={value}"});
-            uut.Init(new []{ new KeyData(typeof(string), key, null, null) });
+            uut.Init(new []{ new KeyData(typeof(string), key) });
             var result = uut.GetValue(key);
             Assert.That(result, Is.EqualTo(new Value(key, value, CommandLineValueProvider.Hint)));
         }
@@ -86,6 +95,19 @@ namespace Paramulate.Test
             var builder = new ParamsBuilder<IInterface>("Root", new []{uut}, true);
             var result = builder.Build();
             Assert.That(result.TestIntShort, Is.EqualTo(value));
+        }
+        
+        [Test]
+        [TestCase("ds")]
+        [TestCase("deepString")]
+        [TestCase("Root.OneLevel.TestString")]
+        public void TestCommandLineWithDeeperProperty(string key)
+        {
+            const string value = "HelloMate";
+            var uut = new CommandLineValueProvider(new []{$"--{key}={value}"});
+            var builder = new ParamsBuilder<IInterface>("Root", new []{uut}, true);
+            var result = builder.Build();
+            Assert.That(result.OneLevel.TestString, Is.EqualTo(value));
         }
     }
 }

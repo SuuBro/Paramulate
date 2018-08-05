@@ -2,7 +2,7 @@ using System;
 
 namespace Paramulate.Test
 {
-    internal class TestData
+    internal static class TestData
     {
         public const string NullStr = "null";
 

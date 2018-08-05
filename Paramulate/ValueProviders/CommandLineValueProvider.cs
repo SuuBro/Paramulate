@@ -38,7 +38,9 @@ namespace Paramulate.ValueProviders
 
         private static string KeyToOption(KeyData key)
         {
-            var options = new []{ key.FullKey, key.ReferenceKey, key.ShortReferenceKey}
+            var options = new []{ key.FullKey }
+                .Concat(key.CommandLineKeys.Select(k => k.ReferenceKey))
+                .Concat(key.CommandLineKeys.Select(k => k.ShortReferenceKey))
                 .Where(o => o != null)
                 .Distinct();
 

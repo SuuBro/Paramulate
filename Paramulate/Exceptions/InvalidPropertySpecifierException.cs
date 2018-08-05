@@ -12,7 +12,7 @@ namespace Paramulate.Exceptions
 
         internal InvalidPropertySpecifierException(Type containingType, string propertyName, string specifier,
             PropertyInfo onProperty, Type inType)
-            :base($"Could not find the property '{propertyName}' the type '{containingType}'. Please chack the specifier" +
+            :base($"Could not find the property '{propertyName}' in the type '{containingType}'. Please chack the specifier" +
                   $" '{specifier}' on property '{onProperty.Name}' in the type '{inType}'")
         {
         }

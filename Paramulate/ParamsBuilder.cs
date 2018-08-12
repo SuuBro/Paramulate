@@ -70,10 +70,8 @@ namespace Paramulate
                         result.Add(key.FullKey, key);
                     }
                 }
-                else
-                {
-                    result.Add(propertyPath, new KeyData(property.PropertyType, propertyPath));
-                }
+                result.Add(propertyPath, new KeyData(property.PropertyType, propertyPath));
+                
                 if (depth != 0)
                 {
                     continue;
@@ -107,9 +105,9 @@ namespace Paramulate
             return keyData.WithCommandLine(attr?.ReferenceKey, attr?.ShortReferenceKey);
         }
 
-        public static IParamsBuilder<T> New(string root, IReadOnlyList<IValueProvider> valueProviders=null)
+        public static IParamsBuilder<T> New(string root, params IValueProvider[] valueProviders)
         {
-            return new ParamsBuilder<T>(root, valueProviders ?? new IValueProvider[0], true);
+            return new ParamsBuilder<T>(root, valueProviders, true);
         }
 
         public T Build()

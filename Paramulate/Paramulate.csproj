@@ -1,6 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+    <Version>1.0.0-beta1</Version>
+    <Authors>SuuBro</Authors>
+    <Company />
+    <Description>Component Parameterisation for C#</Description>
+    <Copyright>Copyright 2018</Copyright>
+    <RepositoryUrl>https://github.com/SuuBro/Paramulate</RepositoryUrl>
+    <RepositoryType>GitHub</RepositoryType>
+    <PackageTags>Paramulate Parameterisation Parameters Arguments Configuration Options Commandline CLI csharp</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="ImpromptuInterface" Version="7.0.1" />

@@ -2,10 +2,10 @@
 using NUnit.Framework;
 using Paramulate.Attributes;
 using Paramulate.Exceptions;
+using Paramulate.ValueProviders;
 
 namespace Paramulate.Test
 {
-    [Paramulate]
     public interface ITestParameterObject
     {
         [Default(TestData.IntStr)]
@@ -53,7 +53,6 @@ namespace Paramulate.Test
         string PropertyWithoutDefault { get; }
     }
 
-    [Paramulate]
     public interface ITestParameterObjectNullables
     {
         [Default(TestData.IntStr)]
@@ -87,14 +86,12 @@ namespace Paramulate.Test
         TimeSpan? TimeSpanNull { get; set; }
     }
 
-    [Paramulate]
     public interface ITestInvalidParameterObject
     {
         [Default(TestData.InvalidIntStr)]
         int InvalidInt { get; }
     }
 
-    [Paramulate]
     public interface ITestInvalidParameterObject2
     {
         [Default(TestData.InvalidTimeSpanStr)]

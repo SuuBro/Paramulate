@@ -3,14 +3,12 @@ using Paramulate.Attributes;
 
 namespace Paramulate.Test
 {
-    [Paramulate]
     public interface IChild
     {
         [Default("TestChild")]
         string TestChildValue { get; }
     }
 
-    [Paramulate]
     public interface IParent
     {
         IChild Child { get; }
@@ -19,7 +17,6 @@ namespace Paramulate.Test
         string TestParentValue { get; }
     }
 
-    [Paramulate]
     public interface IGrandParent
     {
         IParent Child { get; }

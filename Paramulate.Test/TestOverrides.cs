@@ -4,7 +4,6 @@ using Paramulate.Exceptions;
 
 namespace Paramulate.Test
 {
-    [Paramulate]
     public interface ILevel1Params
     {
         string Level1 { get; }
@@ -14,7 +13,6 @@ namespace Paramulate.Test
         ILevel2Params Level2Params { get; }
     }
 
-    [Paramulate]
     public interface ILevel2Params
     {
         [Default("OverrideMe")]
@@ -25,7 +23,6 @@ namespace Paramulate.Test
         ILevel3Params Level3Params { get; }
     }
 
-    [Paramulate]
     public interface ILevel3Params
     {
         string Level3 { get; }

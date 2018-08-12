@@ -4,7 +4,6 @@ using Paramulate.ValueProviders;
 
 namespace Paramulate.Test
 {
-    [Paramulate]
     public interface IInterface
     {
         [CommandLine("shortName", "Set the TestInt property")]
@@ -17,7 +16,6 @@ namespace Paramulate.Test
         IDeeper OneLevel { get; }
     }
 
-    [Paramulate]
     public interface IDeeper
     {
         string TestString { get; }

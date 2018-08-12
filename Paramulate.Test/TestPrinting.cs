@@ -5,7 +5,6 @@ using Paramulate.Attributes;
 
 namespace Paramulate.Test
 {
-    [Paramulate]
     public interface ISimple
     {
         [Default("110011")]
@@ -15,7 +14,6 @@ namespace Paramulate.Test
         string AString { get; set; }
     }
 
-    [Paramulate]
     public interface IPrintParent
     {
         [Default("120021")]

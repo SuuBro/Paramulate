@@ -30,7 +30,8 @@ namespace Paramulate.Reflection
 
         public static bool IsNestedParameterProperty(PropertyInfo propertyInfo)
         {
-            return propertyInfo.PropertyType.HasAttribute<ParamulateAttribute>();
+            return propertyInfo.PropertyType.IsInterface
+                   && GetProperties(propertyInfo.PropertyType).Any();
         }
 
         public static bool HasDefaultAttribute(PropertyInfo propertyInfo, out DefaultAttribute defaultAttribute)

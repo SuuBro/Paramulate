@@ -95,7 +95,7 @@ App:
   OutputLanguage: "English" (From Command Line)
   UserDb:
     ConnectionString: "Server=TEST;Database=UserDb7E2A" (From Command Line)
-    NumRetries: 3 (From Override in ITranslatorParams)
+    NumRetries: 3 (From Override on UserDb)
 ```
 
 ## Features

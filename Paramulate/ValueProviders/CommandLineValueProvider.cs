@@ -10,7 +10,7 @@ namespace Paramulate.ValueProviders
 
         private readonly string[] _arguments;
 
-        private readonly Dictionary<string,string> _dictionary = new Dictionary<string, string>();
+        private readonly Dictionary<string,string> _values = new Dictionary<string, string>();
 
         public CommandLineValueProvider(string[] arguments)
         {
@@ -19,8 +19,16 @@ namespace Paramulate.ValueProviders
 
         public InitResult Init(KeyData[] knownKeys)
         {
+            var helpRequested = false;
+            new OptionSet { {"h|?|help", v => helpRequested = true} }.Parse(_arguments);
+            if (helpRequested)
+            {
+                return InitResult.HelpRequested();
+            }
+            
             var optionSet = MakeOptionSet(knownKeys);
             var unknownArgs = optionSet.Parse(_arguments);
+
             return unknownArgs.Any()
                 ? InitResult.UnrecognisedParams(unknownArgs.Select(a => new UnrecognisedParameter(a, Hint)).ToList())
                 : InitResult.Ok();
@@ -31,7 +39,7 @@ namespace Paramulate.ValueProviders
             var set = new OptionSet();
             foreach (var key in knownKeys)
             {
-                set.Add(KeyToOption(key), v => _dictionary[key.FullKey] = v);
+                set.Add(KeyToOption(key), v => _values[key.FullKey] = v);
             }
             return set;
         }
@@ -39,8 +47,8 @@ namespace Paramulate.ValueProviders
         private static string KeyToOption(KeyData key)
         {
             var options = new []{ key.FullKey }
-                .Concat(key.CommandLineKeys.Select(k => k.ReferenceKey))
-                .Concat(key.CommandLineKeys.Select(k => k.ShortReferenceKey))
+                .Concat(key.CommandLineKeys.Select(k => k.Alias))
+                .Concat(key.CommandLineKeys.Select(k => k.ShortAlias))
                 .Where(o => o != null)
                 .Distinct();
 
@@ -54,7 +62,7 @@ namespace Paramulate.ValueProviders
         public Value? GetValue(string key)
         {
             string value;
-            return _dictionary.TryGetValue(key, out value)
+            return _values.TryGetValue(key, out value)
                 ? (Value?) new Value(key, value, Hint)
                 : null;
         }

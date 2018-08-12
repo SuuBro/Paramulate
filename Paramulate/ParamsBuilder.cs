@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using ImpromptuInterface;
 using Paramulate.Attributes;
 using Paramulate.Exceptions;
 using Paramulate.Reflection;
 using Paramulate.Serialisation;
 using Paramulate.ValueProviders;
+using AliasAttribute = Paramulate.Attributes.AliasAttribute;
 
 namespace Paramulate
 {
@@ -24,7 +26,21 @@ namespace Paramulate
         private readonly string _rootName;
         private readonly IReadOnlyList<IValueProvider> _valueProviders;
 
-        internal ParamsBuilder(string rootName, IReadOnlyList<IValueProvider> valueProviders, bool throwOnUnrecognisedParameters)
+        public static IParamsBuilder<T> New(string root,
+            params IValueProvider[] valueProviders)
+        {
+            return new ParamsBuilder<T>(root, valueProviders, true);
+        }
+        
+        public static IParamsBuilder<T> New(string root, 
+            Action<string> helpCallbackOverride,
+            params IValueProvider[] valueProviders)
+        {
+            return new ParamsBuilder<T>(root, valueProviders, true, helpCallbackOverride);
+        }
+        
+        internal ParamsBuilder(string rootName, IReadOnlyList<IValueProvider> valueProviders,
+            bool throwOnUnrecognisedParameters, Action<string> helpCallbackOverride = null)
         {
             if (rootName.Contains(Consts.PathSeperator.ToString()))
             {
@@ -34,8 +50,47 @@ namespace Paramulate
 
             _rootName = rootName;
             _valueProviders = valueProviders;
-            var initResults = _valueProviders.Select(provider => provider.Init(GetKeys(rootName, typeof(T), 0)));
+            
+            var initResults = _valueProviders
+                .Select(provider => provider.Init(GetKeys(rootName, typeof(T), 0)))
+                .ToArray();
+            
+            CheckForHelpRequested(helpCallbackOverride, initResults);
             CheckForUnrecognisedParameters(throwOnUnrecognisedParameters, initResults);
+        }
+
+        private void CheckForHelpRequested(Action<string> helpCallbackOverride, InitResult[] initResults)
+        {
+            if(!initResults.Any(r => r.HelpWasRequested))
+            {
+                return;
+            }
+
+            var helpText = BuildHelpText();
+            
+            if (helpCallbackOverride != null)
+            {
+                helpCallbackOverride(helpText);
+                return;
+            }
+            
+            Console.WriteLine(helpText);
+            Environment.Exit(0);
+        }
+
+        private static string BuildHelpText()
+        {
+            var builder = new StringBuilder();
+            foreach (var property in ReflectionUtils.GetProperties(typeof(T)))
+            {
+                foreach (var alias in ReflectionUtils.GetAttributes<AliasAttribute>(property))
+                {
+                    // TODO improve this...
+                    builder.Append($"-{alias.ShortAlias}  --{alias.Alias}:  {alias.HelpText}");
+                    builder.Append(Environment.NewLine);
+                }
+            }
+            return builder.ToString();
         }
 
         private static void CheckForUnrecognisedParameters(bool throwOnUnrecognisedArgs, IEnumerable<InitResult> initResults)
@@ -76,16 +131,15 @@ namespace Paramulate
                 {
                     continue;
                 }
-                foreach (var attr in ReflectionUtils.GetAttributes<CommandLineAttribute>(property))
+                foreach (var attr in ReflectionUtils.GetAttributes<AliasAttribute>(property))
                 {
-                    KeyData key;
                     var absPath = path + "." + property.Name + "." + attr.PathToDeeperKey; 
                     if (attr.PathToDeeperKey == null)
                     {
                         result[propertyPath] = result[propertyPath].WithCommandLine(
-                            attr.ReferenceKey, attr.ShortReferenceKey);
+                            attr.Alias, attr.ShortAlias);
                     }
-                    else if (!result.TryGetValue(absPath, out key))
+                    else if (!result.TryGetValue(absPath, out var key))
                     {
                         throw new InvalidPropertySpecifierException(type, property.Name, attr.PathToDeeperKey,
                             property, type);
@@ -93,21 +147,11 @@ namespace Paramulate
                     else
                     {
                         result[absPath] =
-                            key.WithCommandLine(attr.ReferenceKey, attr.ShortReferenceKey);
+                            key.WithCommandLine(attr.Alias, attr.ShortAlias);
                     }
                 }
             }
             return result.Values.ToArray();
-        }
-
-        private static KeyData AddCommandLineKeys(KeyData keyData, CommandLineAttribute attr)
-        {
-            return keyData.WithCommandLine(attr?.ReferenceKey, attr?.ShortReferenceKey);
-        }
-
-        public static IParamsBuilder<T> New(string root, params IValueProvider[] valueProviders)
-        {
-            return new ParamsBuilder<T>(root, valueProviders, true);
         }
 
         public T Build()
@@ -214,8 +258,7 @@ namespace Paramulate
                     continue;
                 }
 
-                DefaultAttribute defaultAttr;
-                var value = ReflectionUtils.HasDefaultAttribute(property, out defaultAttr)
+                var value = ReflectionUtils.HasDefaultAttribute(property, out var defaultAttr)
                     ? ValueDeserialiser.GetValue(defaultAttr.Value, property.PropertyType, property.Name,
                                                  "setting default value")
                     : ReflectionUtils.MakeDefault(property.PropertyType);

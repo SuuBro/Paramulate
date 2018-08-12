@@ -17,11 +17,11 @@ namespace Paramulate.Test
     public interface ITranslatorParams
     {
         [Default("AutoDetect")]
-        [CommandLine("i", "input-language", "(Optional) Use this to choose the input language. " +
+        [Alias("i", "input-language", "(Optional) Use this to choose the input language. " +
                                             "Either 'AutoDetect' or a supported language (e.g. 'Spanish')")]
         string InputLanguage { get; }
         
-        [CommandLine("o", "output-language", "Use this to choose the output language. " +
+        [Alias("o", "output-language", "Use this to choose the output language. " +
                                              "Any supported language (e.g. 'Mandarin')")]
         string OutputLanguage { get; }
         

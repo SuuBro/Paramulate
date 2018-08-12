@@ -6,13 +6,13 @@ namespace Paramulate.Test
 {
     public interface IInterface
     {
-        [CommandLine("shortName", "Set the TestInt property")]
+        [Alias("shortName", "Set the TestInt property")]
         int TestInt { get; }
 
-        [CommandLine("s", "shorterName", "Set the TestInt property")]
+        [Alias("s", "shorterName", "Set the TestInt property")]
         int TestIntShort { get; }
         
-        [CommandLine("TestString", "ds", "deepString", "Set the OneLevel.TestString porperty")]
+        [Alias("TestString", "ds", "deepString", "Set the OneLevel.TestString porperty")]
         IDeeper OneLevel { get; }
     }
 

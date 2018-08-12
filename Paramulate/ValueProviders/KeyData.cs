@@ -7,13 +7,13 @@ namespace Paramulate.ValueProviders
     {
         public CommandLineKeys(string referenceKey, string shortReferenceKey)
         {
-            ReferenceKey = referenceKey;
-            ShortReferenceKey = shortReferenceKey;
+            Alias = referenceKey;
+            ShortAlias = shortReferenceKey;
         }
 
-        public string ReferenceKey { get; }
+        public string Alias { get; }
 
-        public string ShortReferenceKey { get; }
+        public string ShortAlias { get; }
     }
     
     public struct KeyData

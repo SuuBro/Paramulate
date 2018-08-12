@@ -26,11 +26,11 @@
 </div>
 
 ## Table of Contents
-- [Philosopy](#philosophy)
+- [Philosophy](#philosophy)
 - [Example](#example)
 - [Features](#features)
 
-## Philosopy
+## Philosophy
 Paramulate creates a culture around the design of your components, with respect to parameterisation. It hopes to inspire developers to follow these rules when writing applications and libraries:
 - __Separate logic:__ Paramulate encourages developers to separate business logic from configuration and settings, behaviour should be agnostic to the input mechanism
 - __Author knows best:__ sensible defaults should be provided by developers to make using their component easier

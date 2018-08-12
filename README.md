@@ -80,6 +80,19 @@ Given the code:
         }
     }
 ```
+and the command
+```bash
+TranslatorApp.exe -o English --App.UserDb.ConnectionString "Server=TEST;Database=UserDb7E2A"
+```
+You would have the following parameter object initilaised for you:
+```text
+App:
+  InputLanguage: "AutoDetect" (From Default)
+  OutputLanguage: "English" (From Command Line)
+  UserDb:
+    ConnectionString: "Server=TEST;Database=UserDb7E2A" (From Command Line)
+    NumRetries: 3 (From Override in ITranslatorParams)
+```
 
 ## Features
 TODO

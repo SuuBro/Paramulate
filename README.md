@@ -35,7 +35,7 @@
 Paramulate is a powerful framework for parameterising C# code, from command line arguments, programmatic defaults, config files, databases or any other source you like! It allows you to easily print your parameters to an output stream and see where individual settings came from.
 
 ## Philosophy
-Paramulate creates a culture around the design of your components, with respect to parameterisation. It hopes to inspire developers to follow these rules when writing applications and libraries:
+Paramulate creates a culture around the design of your components with respect to parameterisation. It hopes to inspire developers to follow these mantras when writing applications and libraries:
 - __Separate logic:__ Paramulate encourages developers to separate business logic from configuration and settings, behaviour should be agnostic to the input mechanism
 - __Author knows best:__ sensible defaults should be provided by developers to make using their component easier
 - __Customer knows better:__ advanced users what to change everything, and they know their use-case best

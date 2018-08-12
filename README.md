@@ -40,7 +40,46 @@ Paramulate creates a culture around the design of your components, with respect 
 - __Consistency without constraint:__ Paramulate encourages consistency, but doesn't force a dependency
 
 ## Example
-TODO
+Given the code:
+```csharp
+    public interface IUserDatabaseParams
+    {
+        [Default("server=PROD;Database=UserDb")]
+        string ConnectionString { get; }
+        
+        [Default("2")]
+        int NumRetries { get; }
+    }
+    
+    public interface ITranslatorParams
+    {
+        [Default("AutoDetect")]
+        [CommandLine("i", "input-language", "(Optional) Use this to choose the input language. " +
+                                            "Either 'AutoDetect' or a supported language (e.g. 'Spanish')")]
+        string InputLanguage { get; }
+        
+        [CommandLine("o", "output-language", "Use this to choose the output language. " +
+                                             "Any supported language (e.g. 'Mandarin')")]
+        string OutputLanguage { get; }
+        
+        [Override("NumRetries", "3")]
+        IUserDatabaseParams UserDb { get;}
+    }
+    
+    public class TranslatorApp
+    {
+        public static int Main(string[] args)
+        {
+            var builder = ParamsBuilder<ITranslatorParams>.New("App",
+                new CommandLineValueProvider(args)
+            );
+            var parameters = builder.Build();
+            builder.WriteParams(parameters, Console.Out);
+            // ... App Code ...
+            return 0;
+        }
+    }
+```
 
 ## Features
 TODO

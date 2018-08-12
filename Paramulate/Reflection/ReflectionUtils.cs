@@ -67,7 +67,9 @@ namespace Paramulate.Reflection
             obj[targetPropertyName] = ValueDeserialiser.GetValue(details.Attribute.Value, targetPropertyType,
                 $"{root}.{path}", $"setting override from property '{details.Property.Name}' in " +
                                   $"type '{details.ContainingType}'");
-            obj[targetPropertyName+Consts.SourceMetadata] = $"Override in {details.ContainingType.Name}";
+            
+            var sourcePath = root.Substring(root.IndexOf('.')+1); // Trim the top root
+            obj[targetPropertyName+Consts.SourceMetadata] = $"Override on {sourcePath}";
         }
 
         private static Type GetPropertyType(Type containingType, string propertyName, OverrideDetails details)

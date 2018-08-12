@@ -5,6 +5,11 @@ using Paramulate.Attributes;
 
 namespace Paramulate.Test
 {
+    public interface IDeep
+    {
+        string Deeper { get; set; }
+    }
+    
     public interface ISimple
     {
         [Default("110011")]
@@ -12,6 +17,12 @@ namespace Paramulate.Test
 
         [Default("Here Is A Value Mate")]
         string AString { get; set; }
+        
+        [Override("Deeper", "I should be ignored")]
+        IDeep Deep { get; }
+        
+        [Override("Deeper", "I came from Derp")]
+        IDeep Derp { get; }
     }
 
     public interface IPrintParent
@@ -20,6 +31,7 @@ namespace Paramulate.Test
         int ParentLevelInt { get; set; }
 
         [Override("AString", "I came from IPrintParent")]
+        [Override("Deep.Deeper", "I came from IPrintParent too")]
         ISimple Child1 { get; set; }
 
         [Default("I'm on the parent")]
@@ -30,25 +42,7 @@ namespace Paramulate.Test
     public class TestPrinting
     {
         [Test]
-        public void TestPrintingSimple()
-        {
-            var builder = ParamsBuilder<ISimple>.New("RootName");
-            var testObject = builder.Build();
-            var testStream = new TextMessageWriter();
-            builder.WriteParams(testObject, testStream);
-
-            Console.WriteLine(testStream.ToString());
-
-            Assert.That(testStream.ToString(), Is.EqualTo(
-@"RootName:
-  AnIntFromDefault: 110011 (From Default)
-  AString: ""Here Is A Value Mate"" (From Default)
-"
-            ));
-        }
-
-        [Test]
-        public void TestPrintingNested()
+        public void TestPrintingObject()
         {
             var builder = ParamsBuilder<IPrintParent>.New("PrintParent");
             var testObject = builder.Build();
@@ -62,7 +56,12 @@ namespace Paramulate.Test
   ParentLevelInt: 120021 (From Default)
   Child1:
     AnIntFromDefault: 110011 (From Default)
-    AString: ""I came from IPrintParent"" (From Override in IPrintParent)
+    AString: ""I came from IPrintParent"" (From Override on Child1)
+    Deep:
+      Deeper: ""I came from IPrintParent too"" (From Override on Child1)
+
+    Derp:
+      Deeper: ""I came from Derp"" (From Override on Child1.Derp)
 
   ParentLevelString: ""I'm on the parent"" (From Default)
 "

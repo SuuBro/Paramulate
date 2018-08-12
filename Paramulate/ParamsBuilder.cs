@@ -217,8 +217,10 @@ namespace Paramulate
             return new string(' ', depth * 2);
         }
 
-        private static void PrintParamsObject(int depth, TextWriter writer, Type type, IDictionary<string, object> obj)
+        private bool _justWroteBlankLine; // Never print two blank lines between sections
+        private void PrintParamsObject(int depth, TextWriter writer, Type type, IDictionary<string, object> obj)
         {
+            _justWroteBlankLine = false;
             var propertyInfos = ReflectionUtils.GetProperties(type);
             foreach (var property in propertyInfos)
             {
@@ -227,13 +229,19 @@ namespace Paramulate
                     writer.WriteLine($"{Indent(depth)}{property.Name}:");
                     PrintParamsObject(depth+1, writer, property.PropertyType,
                                       obj[property.Name] as IDictionary<string, object>);
-                    writer.WriteLine();
+                    
+                    if (!_justWroteBlankLine)
+                    {
+                        writer.WriteLine();
+                        _justWroteBlankLine = true;
+                    }
                     continue;
                 }
 
                 writer.WriteLine($"{Indent(depth)}{property.Name}:" +
                                  $" {ValueSerialser.Serialize(obj[property.Name])}" +
                                  $" (From {obj[property.Name + Consts.SourceMetadata]})");
+                _justWroteBlankLine = false;
             }
         }
 

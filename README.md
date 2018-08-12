@@ -16,3 +16,11 @@
       alt="Nuget" />
   </a>
 </div>
+
+<div align="center">
+  <sub>Written by 
+  <a href="https://www.linkedin.com/in/jsubramaniam/">Joshua Subramaniam</a> and
+  <a href="https://github.com/SuuBro/Paramulate/graphs/contributors">
+    contributors
+  </a>
+</div>

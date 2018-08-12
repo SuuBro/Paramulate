@@ -26,9 +26,13 @@
 </div>
 
 ## Table of Contents
+- [Summary](#summary)
 - [Philosophy](#philosophy)
 - [Example](#example)
 - [Features](#features)
+
+## Summary
+Paramulate is a powerful framework for parameterising C# code, from command line arguments, programmatic defaults, config files, databases or any other source you like! It allows you to easily print your parameters to an output stream and see where individual settings came from.
 
 ## Philosophy
 Paramulate creates a culture around the design of your components, with respect to parameterisation. It hopes to inspire developers to follow these rules when writing applications and libraries:
@@ -40,7 +44,59 @@ Paramulate creates a culture around the design of your components, with respect 
 - __Consistency without constraint:__ Paramulate encourages consistency, but doesn't force a dependency
 
 ## Example
-TODO
+Given the code:
+```csharp
+    public interface IUserDatabaseParams
+    {
+        [Default("server=PROD;Database=UserDb")]
+        string ConnectionString { get; }
+        
+        [Default("2")]
+        int NumRetries { get; }
+    }
+    
+    public interface ITranslatorParams
+    {
+        [Default("AutoDetect")]
+        [CommandLine("i", "input-language", "(Optional) Use this to choose the input language. " +
+                                            "Either 'AutoDetect' or a supported language (e.g. 'Spanish')")]
+        string InputLanguage { get; }
+        
+        [CommandLine("o", "output-language", "Use this to choose the output language. " +
+                                             "Any supported language (e.g. 'Mandarin')")]
+        string OutputLanguage { get; }
+        
+        [Override("NumRetries", "3")]
+        IUserDatabaseParams UserDb { get;}
+    }
+    
+    public class TranslatorApp
+    {
+        public static int Main(string[] args)
+        {
+            var builder = ParamsBuilder<ITranslatorParams>.New("App",
+                new CommandLineValueProvider(args)
+            );
+            var parameters = builder.Build();
+            builder.WriteParams(parameters, Console.Out);
+            // ... App Code ...
+            return 0;
+        }
+    }
+```
+and the command
+```bash
+TranslatorApp.exe -o English --App.UserDb.ConnectionString "Server=TEST;Database=UserDb7E2A"
+```
+You would have the following parameter object initilaised for you:
+```text
+App:
+  InputLanguage: "AutoDetect" (From Default)
+  OutputLanguage: "English" (From Command Line)
+  UserDb:
+    ConnectionString: "Server=TEST;Database=UserDb7E2A" (From Command Line)
+    NumRetries: 3 (From Override in ITranslatorParams)
+```
 
 ## Features
 TODO

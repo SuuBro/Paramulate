@@ -18,6 +18,7 @@ namespace Paramulate.Test
                 Assert.That(s, Is.EqualTo(
 @"-i  --input-language:  (Optional) Use this to choose the input language. Either 'AutoDetect' or a supported language (e.g. 'Spanish')
 -o  --output-language:  Use this to choose the output language. Any supported language (e.g. 'Mandarin')
+     --mode:  (Optional) Use this to choose the translation mode
 "));
                 Assert.Pass();
             }

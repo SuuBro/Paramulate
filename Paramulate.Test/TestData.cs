@@ -2,7 +2,7 @@ using System;
 
 namespace Paramulate.Test
 {
-    internal static class TestData
+    public static class TestData
     {
         public const string NullStr = "null";
 
@@ -41,5 +41,16 @@ namespace Paramulate.Test
         public static readonly TimeSpan TimeSpan = new TimeSpan(0, 9, 11, 12, 300);
         public const string TimeSpanStr = "09:11:12.3";
         public const string InvalidTimeSpanStr = "09::11";
+        
+        public enum TestEnum
+        {
+            Value0 = 0,
+            Value1 = 1,
+        }
+
+        public const string EnumOne = "Value1";
+        public const string InvalidEnumValue = "ValueInvalid";
+        public const string QuotedEnumValue = "'Value1'";
+        public const string NumericEnumValue = "1";
     }
 }

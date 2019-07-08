@@ -8,5 +8,10 @@ namespace Paramulate.Exceptions
             : base(message, inner)
         {
         }
+        
+        internal InvalidProvidedValueException(string message)
+            : base(message)
+        {
+        }
     }
 }

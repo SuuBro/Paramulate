@@ -86,7 +86,9 @@ namespace Paramulate
                 foreach (var alias in ReflectionUtils.GetAttributes<AliasAttribute>(property))
                 {
                     // TODO improve this...
-                    builder.Append($"-{alias.ShortAlias}  --{alias.Alias}:  {alias.HelpText}");
+                    builder.Append(string.IsNullOrWhiteSpace(alias.ShortAlias)
+                        ? $"     --{alias.Alias}:  {alias.HelpText}"
+                        : $"-{alias.ShortAlias}  --{alias.Alias}:  {alias.HelpText}");
                     builder.Append(Environment.NewLine);
                 }
             }

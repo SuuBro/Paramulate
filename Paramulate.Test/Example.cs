@@ -13,6 +13,12 @@ namespace Paramulate.Test
         [Default("2")]
         int NumRetries { get; }
     }
+
+    public enum TranslationMode
+    {
+        Fast = 1,
+        Accurate = 2,
+    }
     
     public interface ITranslatorParams
     {
@@ -27,6 +33,10 @@ namespace Paramulate.Test
         
         [Override("NumRetries", "3")]
         IUserDatabaseParams UserDb { get;}
+        
+        [Default("Fast")]
+        [Alias("mode", "(Optional) Use this to choose the translation mode")]
+        TranslationMode Mode { get;}
     }
     
     [TestFixture]

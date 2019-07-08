@@ -2,7 +2,6 @@
 using NUnit.Framework;
 using Paramulate.Attributes;
 using Paramulate.Exceptions;
-using Paramulate.ValueProviders;
 
 namespace Paramulate.Test
 {
@@ -49,6 +48,15 @@ namespace Paramulate.Test
 
         [Default(TestData.TimeSpanStr)]
         TimeSpan TimeSpan { get; }
+        
+        [Default(TestData.EnumOne)]
+        TestData.TestEnum Enum { get; }
+        
+        [Default(TestData.QuotedEnumValue)]
+        TestData.TestEnum QuotedEnum { get; }
+        
+        [Default(TestData.NumericEnumValue)]
+        TestData.TestEnum NumericEnum { get; }
 
         string PropertyWithoutDefault { get; }
     }
@@ -84,6 +92,9 @@ namespace Paramulate.Test
 
         [Default(TestData.NullStr)]
         TimeSpan? TimeSpanNull { get; set; }
+        
+        [Default(TestData.NullStr)]
+        TestData.TestEnum? Enum { get; }
     }
 
     public interface ITestInvalidParameterObject
@@ -96,6 +107,12 @@ namespace Paramulate.Test
     {
         [Default(TestData.InvalidTimeSpanStr)]
         TimeSpan InvalidTimeSpan { get; }
+    }
+    
+    public interface ITestInvalidParameterObject3
+    {
+        [Default(TestData.InvalidEnumValue)]
+        TestData.TestEnum InvalidEnum { get; }
     }
 
     [TestFixture]
@@ -200,6 +217,27 @@ namespace Paramulate.Test
         }
         
         [Test]
+        public void TestEnum()
+        {
+            Assert.That(TestUtils.Build<ITestParameterObject>().Enum,
+                Is.EqualTo(TestData.TestEnum.Value1));
+        }
+        
+        [Test]
+        public void TestQuotedEnum()
+        {
+            Assert.That(TestUtils.Build<ITestParameterObject>().QuotedEnum,
+                Is.EqualTo(TestData.TestEnum.Value1));
+        }
+        
+        [Test]
+        public void TestNumericdEnum()
+        {
+            Assert.That(TestUtils.Build<ITestParameterObject>().NumericEnum,
+                Is.EqualTo(TestData.TestEnum.Value1));
+        }
+        
+        [Test]
         public void TestPropertyWithoutDefault()
         {
             Assert.That(TestUtils.Build<ITestParameterObject>().PropertyWithoutDefault,
@@ -275,6 +313,13 @@ namespace Paramulate.Test
             Assert.That(TestUtils.Build<ITestParameterObjectNullables>().TimeSpanNull,
                 Is.EqualTo(null));
         }
+        
+        [Test]
+        public void TestNullableEnum()
+        {
+            Assert.That(TestUtils.Build<ITestParameterObjectNullables>().Enum,
+                Is.EqualTo(null));
+        }
 
         [Test]
         public void TestInvalidInt()
@@ -291,6 +336,16 @@ namespace Paramulate.Test
             Assert.That(TestUtils.Build<ITestInvalidParameterObject2>, Throws.TypeOf<InvalidProvidedValueException>()
                 .With.Message.EqualTo("Failed to convert value '09::11' for " +
                                       "property 'InvalidTimeSpan' (type:System.TimeSpan) when setting default value"));
+        }
+        
+        [Test]
+        public void TestInvalidEnum()
+        {
+            Assert.That(TestUtils.Build<ITestInvalidParameterObject3>,
+                Throws.TypeOf<InvalidProvidedValueException>()
+                    .With.Message.EqualTo("Failed to convert value 'ValueInvalid' for property 'InvalidEnum'" +
+                                          " (type:Paramulate.Test.TestData+TestEnum) when setting default value. " +
+                                          "Possible values are [Value0 (0), Value1 (1)]"));
         }
     }
 }

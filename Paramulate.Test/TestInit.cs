@@ -20,7 +20,7 @@ namespace Paramulate.Test
             Assert.That(() => new ParamsBuilder<ITestParameterObject>("", new []{mock}, true),
                 Throws.InstanceOf<UnrecognisedParameterException>()
                 .With.Message.Contains("Unrecognised arguments were provided which can not be set on " +
-                                       "the Paramulate tree with root type ITestParameterObject. "+
+                                       "the Paramulate tree with root type Paramulate.Test.ITestParameterObject. "+
                                        $"Unrecognised arguments:{Environment.NewLine}" +
                                        $"  '--key2=11' from Command Line{Environment.NewLine}" +
                                        $"  '--key3' from Command Line{Environment.NewLine}" +

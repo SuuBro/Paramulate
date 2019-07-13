@@ -106,7 +106,7 @@ namespace Paramulate
             {
                 throw new UnrecognisedParameterException(
                     "Unrecognised arguments were provided which can not be set on " +
-                    "the Paramulate tree with root type ITestParameterObject. " +
+                    $"the Paramulate tree with root type {typeof(T).FullName}. " +
                     $"Unrecognised arguments:{Environment.NewLine}" +
                     string.Join(Environment.NewLine,
                         unrecognisedParameters.Select(up => $"  '{up.Parameter}' from {up.SourceHint}")));

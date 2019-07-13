@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Paramulate.Exceptions;
 
 namespace Paramulate.Serialisation
@@ -11,7 +11,11 @@ namespace Paramulate.Serialisation
     {
         public static string Serialize(object value)
         {
-            return JsonConvert.SerializeObject(value, new JsonSerializerSettings {Formatting = Formatting.Indented});
+            return JsonConvert.SerializeObject(value, new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented,
+                Converters = new List<JsonConverter>{new StringEnumConverter()}
+            });
         }
     }
 

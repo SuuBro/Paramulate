@@ -9,9 +9,18 @@ namespace Paramulate.Test
     {
         string Deeper { get; set; }
     }
+
+    public enum When
+    {
+        Now,
+        Later,
+    }
     
     public interface ISimple
     {
+        [Default("Now")]
+        When When { get; set; }
+        
         [Default("110011")]
         int AnIntFromDefault { get; set; }
 
@@ -55,6 +64,7 @@ namespace Paramulate.Test
 @"PrintParent:
   ParentLevelInt: 120021 (From Default)
   Child1:
+    When: ""Now"" (From Default)
     AnIntFromDefault: 110011 (From Default)
     AString: ""I came from IPrintParent"" (From Override on Child1)
     Deep:

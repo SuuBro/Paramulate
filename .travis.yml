@@ -1,12 +1,10 @@
 language: csharp
-dotnet: 2.0.0
+mono: none
+dotnet: 10.0
 
 install:
   - dotnet restore
 
-  # workaround for missing .net 4.5 targing pack
-  - export FrameworkPathOverride=$(dirname $(which mono))/../lib/mono/4.5/
-
 script:
- - dotnet build
- - dotnet test Paramulate.Test/Paramulate.Test.csproj
+  - dotnet build --configuration Release
+  - dotnet test Paramulate.Test/Paramulate.Test.csproj --configuration Release

@@ -1,6 +1,6 @@
 ﻿using System;
+using System.IO;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 using Paramulate.Attributes;
 
 namespace Paramulate.Test
@@ -55,7 +55,7 @@ namespace Paramulate.Test
         {
             var builder = ParamsBuilder<IPrintParent>.New("PrintParent");
             var testObject = builder.Build();
-            var testStream = new TextMessageWriter();
+            var testStream = new StringWriter();
             builder.WriteParams(testObject, testStream);
 
             Console.WriteLine(testStream.ToString());

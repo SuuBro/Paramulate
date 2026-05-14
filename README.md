@@ -99,4 +99,13 @@ App:
 ```
 
 ## Features
-TODO
+- __Strongly-typed parameters:__ define your parameter tree as plain C# interfaces and let Paramulate generate the implementation for you
+- __Sensible defaults:__ specify defaults inline with `[Default("...")]` so your component is usable out-of-the-box
+- __Command line support out of the box:__ the built-in `CommandLineValueProvider` maps fully-qualified paths (e.g. `--App.UserDb.ConnectionString`) to your tree, with short (`-o`) and long (`--output-language`) aliases via `[Alias]`
+- __Pluggable value providers:__ implement `IValueProvider` to pull values from config files, environment variables, databases, secret stores or anything else, and chain providers together in priority order
+- __Nested parameter trees:__ compose reusable parameter interfaces and tweak nested values per-use with `[Override("PropertyName", "value")]`
+- __Source tracking:__ every value remembers where it came from (`Default`, `Override`, `Command Line`, custom provider, ...) so you can pinpoint exactly where a setting was set
+- __Self-documenting output:__ `WriteParams` pretty-prints the resolved parameter tree (values + sources) to any `TextWriter` -- ideal for startup logs
+- __Built-in help:__ `-h` / `--help` is wired up automatically and prints the aliases and help text declared on your interfaces
+- __Unrecognised argument detection:__ unknown command-line keys are surfaced as an `UnrecognisedParameterException` rather than silently ignored
+- __Rich type support:__ primitives, `string`, `enum` (by name or numeric value), `DateTime`, `TimeSpan`, `Nullable<T>` and any JSON-deserialisable type are supported out of the box

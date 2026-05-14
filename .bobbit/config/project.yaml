@@ -1,0 +1,137 @@
+base_ref: MyUpstream
+components:
+  - name: paramulate
+    repo: .
+    worktree_setup_command: dotnet restore
+    commands:
+      build: dotnet build --no-restore
+      test: dotnet test Paramulate.Test/Paramulate.Test.csproj --no-build
+workflows:
+  general:
+    name: General
+    description: Lightweight workflow for general-purpose goals on the Paramulate library.
+    gates:
+      - id: design-doc
+        name: Design Document
+        content: true
+        inject_downstream: true
+        verify:
+          - name: Design review
+            type: llm-review
+            role: architect
+            prompt: Review this design document for structure, clarity, and completeness.
+              Paramulate is a C# parameterisation framework — pay attention to
+              API ergonomics, attribute design (Default/Alias/Override),
+              value-provider extensibility, and whether the proposed change fits
+              the framework's philosophy of separating logic from configuration.
+          - name: Design gap analysis
+            type: llm-review
+            role: spec-auditor
+            prompt: Compare this design document against the goal spec ({{goal_spec}}).
+              Identify any requirement in the spec that is not addressed by the
+              design, and any design decision that contradicts the spec. Report
+              concrete gaps only — do not flag stylistic concerns.
+      - id: implementation
+        name: Implementation
+        description: "Ralph loop: the agent iterates through these verify steps until
+          they all pass. Build is phase 0; tests run in phase 1; reviews run in
+          phase 2."
+        depends_on:
+          - design-doc
+        verify:
+          - name: Build paramulate
+            type: command
+            component: paramulate
+            command: build
+            timeout: 600
+          - name: Test paramulate
+            type: command
+            phase: 1
+            component: paramulate
+            command: test
+            timeout: 600
+          - name: Post-impl gap analysis
+            type: llm-review
+            role: spec-auditor
+            phase: 2
+            prompt: Compare the code changes on branch {{branch}} vs origin/{{master}}
+              against the goal spec ({{goal_spec}}) and the signed-off design
+              ({{design-doc.content}}). Flag any spec requirement or design
+              decision that is not reflected in the code. IGNORE documentation
+              gaps — those are checked in the dedicated documentation gate.
+              Focus only on code and behavior gaps.
+          - name: Code quality review
+            type: llm-review
+            role: code-reviewer
+            phase: 2
+            prompt: Review the C# code changes on branch {{branch}} vs origin/{{master}} for
+              quality. Check naming, null-handling, exception types from
+              Paramulate/Exceptions, attribute usage, and consistency with the
+              existing Reflection/ValueProviders/Serialisation modules. Flag
+              breaking changes to the public API surface (netstandard2.0/net461
+              targets).
+      - id: documentation
+        name: Documentation
+        depends_on:
+          - implementation
+        verify:
+          - name: Documentation coverage
+            type: llm-review
+            prompt: Confirm every user-facing change is documented. Update README.md when
+              public API or example usage changes. XML doc comments should be
+              present on new public types/members where existing code already
+              uses them.
+      - id: ready-to-merge
+        name: Ready to Merge
+        depends_on:
+          - documentation
+        verify:
+          - name: Branch pushed to remote
+            type: command
+            run: git push origin {{branch}} && git ls-remote --heads origin {{branch}} |
+              grep -q .
+          - name: Master merged into branch
+            type: command
+            run: git fetch origin {{master}} && git merge-base --is-ancestor
+              origin/{{master}} {{branch}}
+          - name: PR raised
+            type: command
+            run: gh pr list --head {{branch}} --base {{master}} --state open --json url -q
+              ".[0].url" | grep -q .
+  quick-fix:
+    name: Quick Fix
+    description: Minimal flow for trivial fixes — no design, no docs gate.
+      Implementation Ralph-loops on build+test only.
+    gates:
+      - id: implementation
+        name: Implementation
+        description: "Ralph loop: build then test. The agent iterates until both pass."
+        verify:
+          - name: Build paramulate
+            type: command
+            component: paramulate
+            command: build
+            timeout: 600
+          - name: Test paramulate
+            type: command
+            phase: 1
+            component: paramulate
+            command: test
+            timeout: 600
+      - id: ready-to-merge
+        name: Ready to Merge
+        depends_on:
+          - implementation
+        verify:
+          - name: Branch pushed to remote
+            type: command
+            run: git push origin {{branch}} && git ls-remote --heads origin {{branch}} |
+              grep -q .
+          - name: Master merged into branch
+            type: command
+            run: git fetch origin {{master}} && git merge-base --is-ancestor
+              origin/{{master}} {{branch}}
+          - name: PR raised
+            type: command
+            run: gh pr list --head {{branch}} --base {{master}} --state open --json url -q
+              ".[0].url" | grep -q .
